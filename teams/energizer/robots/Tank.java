@@ -1,6 +1,7 @@
 package energizer.robots;
 
 import battlecode.common.GameActionException;
+import battlecode.common.MapLocation;
 import battlecode.common.RobotController;
 
 /**
@@ -16,6 +17,25 @@ public class Tank extends BaseRobot {
 
     @Override
     protected void act() throws GameActionException {
+        MapLocation rallyPoint = rc.senseEnemyHQLocation();
 
+        if (rc.isWeaponReady()) {
+            attackSomething();
+        }
+
+        if (rc.getWeaponDelay() > 0 && inRangeToAttack()) {
+            movePauseTicks--;
+            facing = rc.getLocation().directionTo(rallyPoint);
+            return;
+        }
+
+        int retries = 8;
+        while (rc.isCoreReady() && retries > 0) {
+            tryMove(facing);
+            if (rc.isCoreReady()) {
+                facing = facing.rotateRight();
+            }
+            retries--;
+        }
     }
 }

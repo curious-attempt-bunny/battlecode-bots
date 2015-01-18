@@ -31,6 +31,10 @@ public abstract class BaseRobot {
     public final void run() {
         while(true) {
             try {
+                if (rc.isWeaponReady()) {
+                    attackSomething();
+                }
+
                 nearby = rc.senseNearbyRobots(GameConstants.SUPPLY_TRANSFER_RADIUS_SQUARED, myTeam);
                 congested = isCongested();
 
