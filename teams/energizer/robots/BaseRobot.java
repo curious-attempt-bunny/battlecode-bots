@@ -29,11 +29,17 @@ public abstract class BaseRobot {
         while(true) {
             try {
                 act();
+                transferSupply();
+                compute();
             } catch (GameActionException e) {
                 e.printStackTrace();
             }
             rc.yield();
         }
+    }
+
+    protected void compute() throws GameActionException {
+
     }
 
     protected abstract void act() throws GameActionException;
