@@ -24,6 +24,21 @@ public class Beaver extends BaseRobot {
                 }
             }
 
+            if (rc.getTeamOre() >= RobotType.SUPPLYDEPOT.oreCost && countOf(RobotType.TANK) > 2) {
+                boolean isRelayVisible = false;
+
+                for(RobotInfo r : nearby) {
+                    if (isSupplyRelay(r.type)) {
+                        isRelayVisible = true;
+                        break;
+                    }
+                }
+
+                if (!isRelayVisible) {
+                    tryBuild(planDirection.rotateLeft().rotateLeft(), RobotType.SUPPLYDEPOT);
+                }
+            }
+
             if (congested) {
                 planMoveAway();
             } else {
@@ -38,5 +53,14 @@ public class Beaver extends BaseRobot {
                 }
             }
         }
+    }
+
+    private boolean isSupplyRelay(RobotType type) {
+        return type == RobotType.HQ
+                || type == RobotType.TANKFACTORY
+                || type == RobotType.MINERFACTORY
+                || type == RobotType.BARRACKS
+                || type == RobotType.TOWER
+                || type == RobotType.SUPPLYDEPOT;
     }
 }

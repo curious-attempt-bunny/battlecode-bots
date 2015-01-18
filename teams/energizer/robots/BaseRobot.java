@@ -15,7 +15,7 @@ public abstract class BaseRobot {
     static Direction[] directions = {Direction.NORTH, Direction.NORTH_EAST, Direction.EAST, Direction.SOUTH_EAST, Direction.SOUTH, Direction.SOUTH_WEST, Direction.WEST, Direction.NORTH_WEST};
     protected final Random rand;
     protected Direction facing;
-    private RobotInfo[] nearby;
+    protected RobotInfo[] nearby;
     protected boolean congested;
     protected Direction planDirection;
 
