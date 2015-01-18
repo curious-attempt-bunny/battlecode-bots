@@ -52,19 +52,24 @@ public class Beaver extends BaseRobot {
             stuckLoc = null;
         }
 
+//        int distance = 3; //(stuckLoc == null ? 1 : 2);
         for(Direction d : individualDirections) {
             MapLocation nextDirection = rc.getLocation();
-            for(int extension=0; extension<5; extension++) {
-                nextDirection.add(d);
-                System.out.println("Considering "+nextDirection+" rc.canMove(d) = "+rc.canMove(d)+" rc.isPathable(rc.getType(), nextDirection) = "+rc.isPathable(rc.getType(), nextDirection));
-                if (!rc.canMove(d) || rc.isPathable(rc.getType(), nextDirection)) {
+            int extension = 0;
+            while(selected == null && extension<1) {
+                extension++;
+                nextDirection = nextDirection.add(d);
+//                System.out.println("Considering "+nextDirection+" rc.canMove(d) = "+rc.canMove(d)+" rc.senseTerrainTile(nextDirection).isTraversable() = "+rc.senseTerrainTile(nextDirection).isTraversable());
+                if (!rc.canMove(d) || !rc.senseTerrainTile(nextDirection).isTraversable()) {
                     break;
                 }
                 int nextHeight = hqGradient.height(nextDirection);
+//                rc.setIndicatorDot(nextDirection, 5*nextHeight, 0, 0);
+//                System.out.println("    nextHeight = "+nextHeight);
                 if (nextHeight == 0) {
                     break;
                 }
-                System.out.println("Really considering "+nextDirection);
+//                System.out.println("Really considering "+nextDirection);
                 int nextMaxHeight = hqGradient.maxHeight(nextDirection);
                 if (downgradientUntilBetterThan == -1) {
                     if (nextHeight > bestHeight ||
@@ -74,7 +79,7 @@ public class Beaver extends BaseRobot {
                         bestHeight = nextHeight;
                     }
                 } else {
-                    System.out.println("Best is "+bestHeight+" considering "+nextHeight+" for "+downgradientUntilBetterThan);
+//                    System.out.println("Best is "+bestHeight+" considering "+nextHeight+"("+nextDirection+") for "+downgradientUntilBetterThan+" extension "+extension+" in "+d.name());
                     if (bestHeight > downgradientUntilBetterThan || nextHeight > downgradientUntilBetterThan) {
                         if (nextHeight > bestHeight ||
                                 (nextHeight == bestHeight && (nextMaxHeight > bestMaxHeight))) {
@@ -92,6 +97,7 @@ public class Beaver extends BaseRobot {
             }
         }
 
+        System.out.println("Selected = "+selected);
         if (selected != null) {
             rc.move(selected);
         } else {
@@ -101,7 +107,7 @@ public class Beaver extends BaseRobot {
         if (stuckLoc == null) {
             rc.setIndicatorString(0, "Heading up from "+hqGradient.maxHeight(rc.getLocation()));
         } else {
-            rc.setIndicatorString(0, "Heading down to maxHeight of "+hqGradient.maxHeight(stuckLoc));
+            rc.setIndicatorString(0, "Heading down to maxHeight of "+hqGradient.maxHeight(stuckLoc)+" (at "+hqGradient.maxHeight(rc.getLocation())+")");
         }
     }
 }

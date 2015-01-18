@@ -1,6 +1,7 @@
 package levelup.robots;
 
 import battlecode.common.*;
+import levelup.GradientMap;
 
 /**
  * Created by home on 1/6/15.
@@ -25,6 +26,9 @@ public class HQ extends BaseRobot {
 
     @Override
     protected void compute() throws GameActionException {
+        if (Clock.getRoundNum() % 200 == 0) {
+            hqGradient = new GradientMap(rc);
+        }
         hqGradient.computeUntil(3500);
     }
 }

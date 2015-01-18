@@ -15,7 +15,7 @@ public abstract class BaseRobot {
     protected final Team enemyTeam;
     public static Direction[] directions = {Direction.NORTH, Direction.NORTH_EAST, Direction.EAST, Direction.SOUTH_EAST, Direction.SOUTH, Direction.SOUTH_WEST, Direction.WEST, Direction.NORTH_WEST};
     protected final Random rand;
-    protected final GradientMap hqGradient;
+    protected GradientMap hqGradient;
     protected Direction facing;
 
     protected BaseRobot(RobotController _rc) {
