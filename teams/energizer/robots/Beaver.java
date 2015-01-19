@@ -46,25 +46,9 @@ public class Beaver extends BaseRobot {
                 }
                 retries--;
             }
-
-//            if (rc.isCoreReady()) {
-//                if (congested) {
-//                    planMoveAway();
-//                } else {
-//                    planDirection = facing;
-//                    if (rand.nextInt(4) > 0) {
-//                        rc.mine();
-//                    }
-//                }
-//            }
-//
-//            if (rc.isCoreReady()) {
-//                if (rc.canMove(planDirection) && planDirection != null) {
-//                    rc.move(planDirection);
-//                } else {
-//                    rc.move(directions[rand.nextInt(8)]);
-//                }
-//            }
         }
     }
+
+
+
 }
