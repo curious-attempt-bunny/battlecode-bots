@@ -32,7 +32,9 @@ public class Tank extends BaseRobot {
         if (rc.getSupplyLevel() >= 100 && isRelayVisible()) {
             int retries = 8;
             while (rc.isCoreReady() && retries > 0) {
-                tryMove(facing);
+                if (!isAttackableByEnemyTowers(rc.getLocation().add(facing)) && rc.canMove(facing)) {
+                    rc.move(facing);
+                }
                 if (rc.isCoreReady()) {
                     facing = facing.rotateRight();
                 }

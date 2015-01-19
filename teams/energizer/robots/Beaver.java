@@ -38,8 +38,8 @@ public class Beaver extends BaseRobot {
 
             int retries = 8;
             while (rc.isCoreReady() && retries > 0) {
-                if (!isAttackableByEnemyTowers(rc.getLocation().add(facing))) {
-                    tryMove(facing);
+                if (!isAttackableByEnemyTowers(rc.getLocation().add(facing)) && rc.canMove(facing)) {
+                    rc.move(facing);
                 }
                 if (rc.isCoreReady()) {
                     facing = facing.rotateRight();
