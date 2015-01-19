@@ -14,27 +14,23 @@ public class Beaver extends BaseRobot {
     @Override
     protected void act() throws GameActionException {
         if (rc.isCoreReady()) {
-            if (!congested) {
+            boolean isRelayVisible = false;
+
+            for(RobotInfo r : nearby) {
+                if (isSupplyRelay(r.type)) {
+                    isRelayVisible = true;
+                    break;
+                }
+            }
+
+            if (!isRelayVisible) {
                 if (rc.getTeamOre() >= RobotType.MINERFACTORY.oreCost && countOf(RobotType.MINERFACTORY) == 0) {
                     tryBuild(planDirection.rotateLeft().rotateLeft(), RobotType.MINERFACTORY);
                 } else if (rc.getTeamOre() >= RobotType.BARRACKS.oreCost && countOf(RobotType.BARRACKS) == 0 && countOf(RobotType.MINERFACTORY) >= 1) {
                     tryBuild(planDirection.rotateLeft().rotateLeft(), RobotType.BARRACKS);
                 } else if (rc.getTeamOre() >= RobotType.TANKFACTORY.oreCost && (countOf(RobotType.TANKFACTORY) == 0 || rc.getTeamOre() > 2000)) {
                     tryBuild(planDirection.rotateLeft().rotateLeft(), RobotType.TANKFACTORY);
-                }
-            }
-
-            if (rc.getTeamOre() >= RobotType.SUPPLYDEPOT.oreCost && countOf(RobotType.TANK) > 2) {
-                boolean isRelayVisible = false;
-
-                for(RobotInfo r : nearby) {
-                    if (isSupplyRelay(r.type)) {
-                        isRelayVisible = true;
-                        break;
-                    }
-                }
-
-                if (!isRelayVisible) {
+                } else if (rc.getTeamOre() >= RobotType.SUPPLYDEPOT.oreCost && countOf(RobotType.TANK) > 2) {
                     tryBuild(planDirection.rotateLeft().rotateLeft(), RobotType.SUPPLYDEPOT);
                 }
             }
