@@ -16,18 +16,38 @@ public class Miner extends BaseRobot {
             planMine();
 
             if (planDirection != null) {
+                Direction dir;
+
                 if (rc.canMove(planDirection)) {
-                    rc.move(planDirection);
+                    dir = planDirection;
                 } else {
-                    rc.move(directions[rand.nextInt(8)]);
+                    dir = directions[rand.nextInt(8)];
                 }
-            } else {
+
+                MapLocation target = rc.getLocation().add(dir);
+                MapLocation[] towers = rc.senseEnemyTowerLocations();
+                boolean attackable = false;
+                for(MapLocation loc : towers) {
+                    if (target.distanceSquaredTo(loc) <= RobotType.TOWER.attackRadiusSquared) {
+                        attackable = true;
+                        break;
+                    }
+                }
+
+                if (!attackable) {
+                    rc.move(dir);
+                }
+            }
+
+            if (rc.isCoreReady()) {
                 rc.mine();
             }
         }
     }
 
     private void planMine() {
+        MapLocation[] towers = rc.senseEnemyTowerLocations();
+
         Direction bestDirection = null;
         double bestOrePerTurn = mineAmount(rc.getLocation());
 
@@ -38,11 +58,20 @@ public class Miner extends BaseRobot {
                 costToMove *= 1.4;
             }
             if (rc.canMove(d)) {
-                double orePerTurn = mineAmount(mineLocation) / costToMove;
+                boolean attackable = false;
+                for(MapLocation loc : towers) {
+                    if (mineLocation.distanceSquaredTo(loc) <= RobotType.TOWER.attackRadiusSquared) {
+                        attackable = true;
+                        break;
+                    }
+                }
+                if (!attackable) {
+                    double orePerTurn = mineAmount(mineLocation) / costToMove;
 
-                if (orePerTurn > bestOrePerTurn) {
-                    bestOrePerTurn = orePerTurn;
-                    bestDirection = d;
+                    if (orePerTurn > bestOrePerTurn) {
+                        bestOrePerTurn = orePerTurn;
+                        bestDirection = d;
+                    }
                 }
             }
         }
