@@ -288,9 +288,10 @@ public abstract class BaseRobot {
         double count = 0;
 
         for(RobotInfo r : nearby) {
-            sumX += r.location.x - rc.getLocation().x;
-            sumY += r.location.y - rc.getLocation().y;
-            count++;
+            int multiplier = (isSupplyRelay(r.type) ? 1 : 10);
+            sumX += multiplier*(r.location.x - rc.getLocation().x);
+            sumY += multiplier*(r.location.y - rc.getLocation().y);
+            count += multiplier;
         }
 
         double x = -(sumX / count);
@@ -331,5 +332,14 @@ public abstract class BaseRobot {
                 return planDirection;
             }
         }
+    }
+
+    protected boolean isSupplyRelay(RobotType type) {
+        return type == RobotType.HQ
+                || type == RobotType.TANKFACTORY
+                || type == RobotType.MINERFACTORY
+                || type == RobotType.BARRACKS
+                || type == RobotType.TOWER
+                || type == RobotType.SUPPLYDEPOT;
     }
 }

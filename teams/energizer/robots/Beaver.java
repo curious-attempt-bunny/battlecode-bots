@@ -32,31 +32,29 @@ public class Beaver extends BaseRobot {
                     tryBuild(planDirection.rotateLeft().rotateLeft(), RobotType.TANKFACTORY);
                 } else if (rc.getTeamOre() >= RobotType.SUPPLYDEPOT.oreCost && countOf(RobotType.TANK) > 2) {
                     tryBuild(planDirection.rotateLeft().rotateLeft(), RobotType.SUPPLYDEPOT);
+                } else {
+                    rc.mine();
                 }
             }
 
-            if (congested) {
-                planMoveAway();
-            } else {
-                planDirection = facing;
+            if (rc.isCoreReady()) {
+                if (congested) {
+                    planMoveAway();
+                } else {
+                    planDirection = facing;
+                    if (rand.nextInt(4) > 0) {
+                        rc.mine();
+                    }
+                }
             }
 
-            if (rc.isCoreReady() && planDirection != null) {
-                if (rc.canMove(planDirection)) {
+            if (rc.isCoreReady()) {
+                if (rc.canMove(planDirection) && planDirection != null) {
                     rc.move(planDirection);
                 } else {
                     rc.move(directions[rand.nextInt(8)]);
                 }
             }
         }
-    }
-
-    private boolean isSupplyRelay(RobotType type) {
-        return type == RobotType.HQ
-                || type == RobotType.TANKFACTORY
-                || type == RobotType.MINERFACTORY
-                || type == RobotType.BARRACKS
-                || type == RobotType.TOWER
-                || type == RobotType.SUPPLYDEPOT;
     }
 }
