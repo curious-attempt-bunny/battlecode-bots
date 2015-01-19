@@ -30,6 +30,6 @@ public class HQ extends BaseRobot {
     private int maxBeavers() throws GameActionException {
         return 1 + Math.max(
                 countOf(RobotType.BARRACKS) + countOf(RobotType.TANKFACTORY),
-                countOf(RobotType.TANK)/4);
+                countOf(RobotType.TANK)/3);
     }
 }
