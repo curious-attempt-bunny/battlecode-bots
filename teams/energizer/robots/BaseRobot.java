@@ -114,7 +114,7 @@ public abstract class BaseRobot {
     }
 
     // This method will attempt to build in the given direction (or as close to it as possible)
-    protected void tryBuild(Direction d, RobotType type) throws GameActionException {
+    protected boolean tryBuild(Direction d, RobotType type) throws GameActionException {
         int offsetIndex = 0;
         int[] offsets = {0,1,-1,2,-2,3,-3,4};
         int dirint = directionToInt(d);
@@ -125,6 +125,9 @@ public abstract class BaseRobot {
         if (offsetIndex < 8) {
             rc.build(directions[(dirint+offsets[offsetIndex]+8)%8], type);
             rc.broadcast(type.ordinal(), rc.readBroadcast(type.ordinal()) + 1);
+            return true;
+        } else {
+            return false;
         }
     }
 

@@ -20,7 +20,9 @@ public class HQ extends BaseRobot {
         for(RobotType type : RobotType.values()) {
             rc.broadcast(type.ordinal(), counts[type.ordinal()]);
         }
-        if (rc.isCoreReady() && rc.getTeamOre() >= RobotType.BEAVER.oreCost && countOf(RobotType.BEAVER) < 3) {
+
+        if (rc.isCoreReady() &&
+                rc.getTeamOre() >= RobotType.BEAVER.oreCost && countOf(RobotType.BEAVER) < 1 + countOf(RobotType.BARRACKS) + countOf(RobotType.TANKFACTORY)) {
             trySpawn(Direction.NORTH, RobotType.BEAVER);
         }
     }
