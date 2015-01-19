@@ -49,7 +49,7 @@ public abstract class BaseRobot {
     }
 
     protected void compute() throws GameActionException {
-        
+
     }
 
     protected abstract void act() throws GameActionException;
@@ -124,6 +124,7 @@ public abstract class BaseRobot {
         }
         if (offsetIndex < 8) {
             rc.build(directions[(dirint+offsets[offsetIndex]+8)%8], type);
+            rc.broadcast(type.ordinal(), rc.readBroadcast(type.ordinal()) + 1);
         }
     }
 
