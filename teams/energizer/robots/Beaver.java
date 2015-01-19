@@ -16,7 +16,7 @@ public class Beaver extends BaseRobot {
         if (rc.isCoreReady()) {
             if (!isRelayVisible()) {
                 boolean built = false;
-                Direction buildDirection = facing.opposite();
+                Direction buildDirection = facing.rotateRight().rotateRight().rotateRight();
                 if (rc.getTeamOre() >= RobotType.MINERFACTORY.oreCost && countOf(RobotType.MINERFACTORY) == 0) {
                     built = tryBuild(buildDirection, RobotType.MINERFACTORY);
                 } else if (rc.getTeamOre() >= RobotType.BARRACKS.oreCost && countOf(RobotType.BARRACKS) == 0 && countOf(RobotType.MINER) >= 5) {

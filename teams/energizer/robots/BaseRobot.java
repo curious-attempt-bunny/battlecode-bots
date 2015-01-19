@@ -344,7 +344,8 @@ public abstract class BaseRobot {
                 || type == RobotType.MINERFACTORY
                 || type == RobotType.BARRACKS
                 || type == RobotType.TOWER
-                || type == RobotType.SUPPLYDEPOT;
+                || type == RobotType.SUPPLYDEPOT
+                || type == RobotType.BEAVER;
     }
 
 
