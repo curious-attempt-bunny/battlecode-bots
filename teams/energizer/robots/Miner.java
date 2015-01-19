@@ -24,7 +24,7 @@ public class Miner extends BaseRobot {
                     dir = directions[rand.nextInt(8)];
                 }
 
-                if (!isAttackableByEnemyTowers(rc.getLocation().add(dir))) {
+                if (rc.canMove(dir) && !isAttackableByEnemyTowers(rc.getLocation().add(dir))) {
                     rc.move(dir);
                 }
             }

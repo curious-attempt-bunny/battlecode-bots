@@ -198,20 +198,21 @@ public abstract class BaseRobot {
     }
 
     protected void transferSupply() throws GameActionException {
+        if (Clock.getBytecodesLeft() < 250) return;
         double mySupply = rc.getSupplyLevel();
         if (mySupply > 250) {
-            RobotInfo[] myRobots = rc.senseNearbyRobots(15, myTeam);
+            RobotInfo[] myRobots = rc.senseNearbyRobots(GameConstants.SUPPLY_TRANSFER_RADIUS_SQUARED, myTeam);
             MapLocation target = null;
-            double supply = Double.MAX_VALUE;
 
             for(RobotInfo info : myRobots) {
-                if (info.supplyLevel < supply) {
+                if (Clock.getBytecodesLeft() < 500) return;
+                if (info.supplyLevel < mySupply/2) {
                     target = info.location;
-                    supply = info.supplyLevel;
+                    break;
                 }
             }
 
-            if (supply < mySupply/2) {
+            if (target != null) {
                 rc.transferSupplies((int)(mySupply/2), target);
             }
         }

@@ -15,7 +15,7 @@ public class MinerFactory extends BaseRobot {
 
     @Override
     protected void act() throws GameActionException {
-        if (rc.getTeamOre() >= RobotType.MINER.oreCost && countOf(RobotType.MINER) < maxMiners()) {
+        if (rc.isCoreReady() && rc.getTeamOre() >= RobotType.MINER.oreCost && countOf(RobotType.MINER) < maxMiners()) {
             trySpawn(directions[rand.nextInt(8)], RobotType.MINER);
         }
     }

@@ -15,7 +15,7 @@ public class TechnologyInstitute extends BaseRobot {
 
     @Override
     protected void act() throws GameActionException {
-        if (rc.getTeamOre() >= RobotType.COMPUTER.oreCost && computersBuilt <= 12) {
+        if (rc.isCoreReady() && rc.getTeamOre() >= RobotType.COMPUTER.oreCost && computersBuilt <= 12) {
             if (!isHeavyTraffic()) {
                 trySpawn(directions[rand.nextInt(8)], RobotType.COMPUTER);
                 if (!rc.isCoreReady()) {

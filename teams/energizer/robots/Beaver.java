@@ -22,7 +22,7 @@ public class Beaver extends BaseRobot {
                         built = tryBuild(buildDirection, RobotType.MINERFACTORY);
                     } else if (rc.getTeamOre() >= RobotType.BARRACKS.oreCost && countOf(RobotType.BARRACKS) == 0 && countOf(RobotType.MINER) >= 5) {
                         built = tryBuild(buildDirection, RobotType.BARRACKS);
-                    } else if (rc.getTeamOre() >= RobotType.TANKFACTORY.oreCost && (countOf(RobotType.TANKFACTORY) == 0 || rc.getTeamOre() > 1500*countOf(RobotType.TANKFACTORY))) {
+                    } else if (rc.getTeamOre() >= RobotType.TANKFACTORY.oreCost && (countOf(RobotType.TANKFACTORY) == 0 || rc.getTeamOre() > 1500*countOf(RobotType.TANKFACTORY)) && rc.hasBuildRequirements(RobotType.TANKFACTORY)) {
                         built = tryBuild(buildDirection, RobotType.TANKFACTORY);
                     } else if (rc.getTeamOre() >= RobotType.TECHNOLOGYINSTITUTE.oreCost && countOf(RobotType.TANK) > 0 && countOfNearbyFriendly(RobotType.TECHNOLOGYINSTITUTE, 20*20) == 0) {
                         built = tryBuild(buildDirection, RobotType.TECHNOLOGYINSTITUTE);
