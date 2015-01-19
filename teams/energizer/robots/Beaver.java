@@ -24,37 +24,47 @@ public class Beaver extends BaseRobot {
             }
 
             if (!isRelayVisible) {
+                Direction buildDirection = facing.rotateLeft().rotateLeft();
                 if (rc.getTeamOre() >= RobotType.MINERFACTORY.oreCost && countOf(RobotType.MINERFACTORY) == 0) {
-                    tryBuild(planDirection.rotateLeft().rotateLeft(), RobotType.MINERFACTORY);
-                } else if (rc.getTeamOre() >= RobotType.BARRACKS.oreCost && countOf(RobotType.BARRACKS) == 0 && countOf(RobotType.MINERFACTORY) >= 1) {
-                    tryBuild(planDirection.rotateLeft().rotateLeft(), RobotType.BARRACKS);
+                    tryBuild(buildDirection, RobotType.MINERFACTORY);
+                } else if (rc.getTeamOre() >= RobotType.BARRACKS.oreCost && countOf(RobotType.BARRACKS) == 0 && countOf(RobotType.MINER) >= 5) {
+                    tryBuild(buildDirection, RobotType.BARRACKS);
                 } else if (rc.getTeamOre() >= RobotType.TANKFACTORY.oreCost && (countOf(RobotType.TANKFACTORY) == 0 || rc.getTeamOre() > 2000)) {
-                    tryBuild(planDirection.rotateLeft().rotateLeft(), RobotType.TANKFACTORY);
+                    tryBuild(buildDirection, RobotType.TANKFACTORY);
                 } else if (rc.getTeamOre() >= RobotType.SUPPLYDEPOT.oreCost && countOf(RobotType.TANK) > 2) {
-                    tryBuild(planDirection.rotateLeft().rotateLeft(), RobotType.SUPPLYDEPOT);
+                    tryBuild(buildDirection, RobotType.SUPPLYDEPOT);
                 } else {
                     rc.mine();
                 }
             }
 
-            if (rc.isCoreReady()) {
-                if (congested) {
-                    planMoveAway();
-                } else {
-                    planDirection = facing;
-                    if (rand.nextInt(4) > 0) {
-                        rc.mine();
-                    }
+            int retries = 8;
+            while (rc.isCoreReady() && retries > 0) {
+                tryMove(facing);
+                if (rc.isCoreReady()) {
+                    facing = facing.rotateRight();
                 }
+                retries--;
             }
 
-            if (rc.isCoreReady()) {
-                if (rc.canMove(planDirection) && planDirection != null) {
-                    rc.move(planDirection);
-                } else {
-                    rc.move(directions[rand.nextInt(8)]);
-                }
-            }
+//            if (rc.isCoreReady()) {
+//                if (congested) {
+//                    planMoveAway();
+//                } else {
+//                    planDirection = facing;
+//                    if (rand.nextInt(4) > 0) {
+//                        rc.mine();
+//                    }
+//                }
+//            }
+//
+//            if (rc.isCoreReady()) {
+//                if (rc.canMove(planDirection) && planDirection != null) {
+//                    rc.move(planDirection);
+//                } else {
+//                    rc.move(directions[rand.nextInt(8)]);
+//                }
+//            }
         }
     }
 }

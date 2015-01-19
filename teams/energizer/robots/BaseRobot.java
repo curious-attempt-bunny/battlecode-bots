@@ -49,7 +49,7 @@ public abstract class BaseRobot {
     }
 
     protected void compute() throws GameActionException {
-
+        
     }
 
     protected abstract void act() throws GameActionException;
