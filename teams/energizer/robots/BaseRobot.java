@@ -345,7 +345,9 @@ public abstract class BaseRobot {
                 || type == RobotType.BARRACKS
                 || type == RobotType.TOWER
                 || type == RobotType.SUPPLYDEPOT
-                || type == RobotType.BEAVER;
+                || type == RobotType.BEAVER
+                || type == RobotType.TECHNOLOGYINSTITUTE
+                || type == RobotType.COMPUTER;
     }
 
 
@@ -372,5 +374,16 @@ public abstract class BaseRobot {
         }
 
         return attackable;
+    }
+
+    protected int countOfNearbyFriendly(RobotType type, int radiusSquared) {
+        int count = 0;
+        RobotInfo[] friendlies = rc.senseNearbyRobots(radiusSquared, myTeam);
+        for(RobotInfo r : friendlies) {
+            if (r.type == type) {
+                count++;
+            }
+        }
+        return count;
     }
 }

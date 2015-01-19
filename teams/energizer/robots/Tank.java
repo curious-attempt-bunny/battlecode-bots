@@ -88,15 +88,4 @@ public class Tank extends BaseRobot {
 
         return bestTower;
     }
-
-    private int countOfNearbyFriendly(RobotType type, int radiusSquared) {
-        int count = 0;
-        RobotInfo[] friendlies = rc.senseNearbyRobots(radiusSquared, myTeam);
-        for(RobotInfo r : friendlies) {
-            if (r.type == type) {
-                count++;
-            }
-        }
-        return count;
-    }
 }

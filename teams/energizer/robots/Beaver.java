@@ -23,7 +23,9 @@ public class Beaver extends BaseRobot {
                     built = tryBuild(buildDirection, RobotType.BARRACKS);
                 } else if (rc.getTeamOre() >= RobotType.TANKFACTORY.oreCost && (countOf(RobotType.TANKFACTORY) == 0 || rc.getTeamOre() > 2000)) {
                     built = tryBuild(buildDirection, RobotType.TANKFACTORY);
-                } else if (rc.getTeamOre() >= RobotType.SUPPLYDEPOT.oreCost && countOf(RobotType.TANK) > 2) {
+                } else if (rc.getTeamOre() >= RobotType.TECHNOLOGYINSTITUTE.oreCost && countOf(RobotType.TANK) > 0 && countOfNearbyFriendly(RobotType.TECHNOLOGYINSTITUTE, 20*20) == 0) {
+                    built = tryBuild(buildDirection, RobotType.TECHNOLOGYINSTITUTE);
+                } else if (rc.getTeamOre() >= RobotType.SUPPLYDEPOT.oreCost && 2*countOf(RobotType.SUPPLYDEPOT) < countOf(RobotType.COMPUTER)) {
                     built = tryBuild(buildDirection, RobotType.SUPPLYDEPOT);
                 }
 
@@ -48,7 +50,4 @@ public class Beaver extends BaseRobot {
             }
         }
     }
-
-
-
 }

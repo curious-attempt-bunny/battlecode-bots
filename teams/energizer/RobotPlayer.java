@@ -22,6 +22,10 @@ public class RobotPlayer {
             new Barracks(rc).run();
         } else if (rc.getType() == RobotType.TANKFACTORY) {
             new TankFactory(rc).run();
+        } else if (rc.getType() == RobotType.TECHNOLOGYINSTITUTE) {
+            new TechnologyInstitute(rc).run();
+        } else if (rc.getType() == RobotType.COMPUTER) {
+            new Computer(rc).run();
         } else if (rc.getType() == RobotType.MINER) {
             new Miner(rc).run();
         } else if (rc.getType() == RobotType.SOLDIER) {
