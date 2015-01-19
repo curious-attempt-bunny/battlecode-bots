@@ -359,4 +359,17 @@ public abstract class BaseRobot {
         }
         return isRelayVisible;
     }
+
+    protected boolean isAttackableByEnemyTowers(MapLocation target) {
+        MapLocation[] towers = rc.senseEnemyTowerLocations();
+        boolean attackable = false;
+        for(MapLocation loc : towers) {
+            if (target.distanceSquaredTo(loc) <= RobotType.TOWER.attackRadiusSquared) {
+                attackable = true;
+                break;
+            }
+        }
+
+        return attackable;
+    }
 }

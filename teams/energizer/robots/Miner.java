@@ -24,17 +24,7 @@ public class Miner extends BaseRobot {
                     dir = directions[rand.nextInt(8)];
                 }
 
-                MapLocation target = rc.getLocation().add(dir);
-                MapLocation[] towers = rc.senseEnemyTowerLocations();
-                boolean attackable = false;
-                for(MapLocation loc : towers) {
-                    if (target.distanceSquaredTo(loc) <= RobotType.TOWER.attackRadiusSquared) {
-                        attackable = true;
-                        break;
-                    }
-                }
-
-                if (!attackable) {
+                if (!isAttackableByEnemyTowers(rc.getLocation().add(dir))) {
                     rc.move(dir);
                 }
             }
