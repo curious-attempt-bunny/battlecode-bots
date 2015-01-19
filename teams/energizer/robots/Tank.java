@@ -28,15 +28,15 @@ public class Tank extends BaseRobot {
         }
 
         int nearbyTanks = countOfNearbyFriendly(RobotType.TANK, 10);
-        rc.setIndicatorString(2, "Nearby tanks "+nearbyTanks);
-        if (rc.isCoreReady() && nearbyTanks >= 3) {
-            MapLocation tower =  nearbyEnemyTower();
-            if (tower == null) {
-                tower = rc.senseEnemyHQLocation();
-            }
+        MapLocation tower =  nearbyEnemyTower();
+        if (tower == null) {
+            tower = rc.senseEnemyHQLocation();
+        }
 
-            int distanceToTower = rc.getLocation().distanceSquaredTo(tower);
-            rc.setIndicatorString(2, "Distance to tower is "+distanceToTower+" with nearby tanks "+nearbyTanks);
+        int distanceToTower = rc.getLocation().distanceSquaredTo(tower);
+        rc.setIndicatorString(2, "Distance to tower is "+distanceToTower+" with nearby tanks "+nearbyTanks);
+
+        if (rc.isCoreReady() && nearbyTanks >= 3) {
             if (distanceToTower <= RobotType.TOWER.attackRadiusSquared + 10) {
                 facing = rc.getLocation().directionTo(tower);
 
@@ -56,7 +56,7 @@ public class Tank extends BaseRobot {
 
         boolean relayVisible = isRelayVisible();
         rc.setIndicatorString(0, "relay visible? = "+relayVisible);
-        if (rc.isCoreReady() && rc.getSupplyLevel() >= 100 && relayVisible) {
+        if (rc.isCoreReady() && rc.getSupplyLevel() >= 100 && relayVisible && distanceToTower >= RobotType.TOWER.attackRadiusSquared + 2) {
             int retries = 8;
             while (rc.isCoreReady() && retries > 0) {
                 if (!isAttackableByEnemyTowers(rc.getLocation().add(facing)) && rc.canMove(facing)) {
