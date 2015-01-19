@@ -14,16 +14,7 @@ public class Beaver extends BaseRobot {
     @Override
     protected void act() throws GameActionException {
         if (rc.isCoreReady()) {
-            boolean isRelayVisible = false;
-
-            for(RobotInfo r : nearby) {
-                if (isSupplyRelay(r.type)) {
-                    isRelayVisible = true;
-                    break;
-                }
-            }
-
-            if (!isRelayVisible) {
+            if (!isRelayVisible()) {
                 boolean built = false;
                 Direction buildDirection = facing.opposite();
                 if (rc.getTeamOre() >= RobotType.MINERFACTORY.oreCost && countOf(RobotType.MINERFACTORY) == 0) {
@@ -32,7 +23,7 @@ public class Beaver extends BaseRobot {
                     built = tryBuild(buildDirection, RobotType.BARRACKS);
                 } else if (rc.getTeamOre() >= RobotType.TANKFACTORY.oreCost && (countOf(RobotType.TANKFACTORY) == 0 || rc.getTeamOre() > 2000)) {
                     built = tryBuild(buildDirection, RobotType.TANKFACTORY);
-                } else if (rc.getTeamOre() >= RobotType.SUPPLYDEPOT.oreCost && countOf(RobotType.TANK) > 2 && nearby.length == 0) {
+                } else if (rc.getTeamOre() >= RobotType.SUPPLYDEPOT.oreCost && countOf(RobotType.TANK) > 2) {
                     built = tryBuild(buildDirection, RobotType.SUPPLYDEPOT);
                 }
 

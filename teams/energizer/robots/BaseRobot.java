@@ -346,4 +346,17 @@ public abstract class BaseRobot {
                 || type == RobotType.TOWER
                 || type == RobotType.SUPPLYDEPOT;
     }
+
+
+    protected boolean isRelayVisible() {
+        boolean isRelayVisible = false;
+
+        for(RobotInfo r : nearby) {
+            if (isSupplyRelay(r.type)) {
+                isRelayVisible = true;
+                break;
+            }
+        }
+        return isRelayVisible;
+    }
 }

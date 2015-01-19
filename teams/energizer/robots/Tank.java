@@ -29,13 +29,17 @@ public class Tank extends BaseRobot {
             return;
         }
 
-        int retries = 8;
-        while (rc.isCoreReady() && retries > 0) {
-            tryMove(facing);
-            if (rc.isCoreReady()) {
-                facing = facing.rotateRight();
+        if (rc.getSupplyLevel() >= 100 && isRelayVisible()) {
+            int retries = 8;
+            while (rc.isCoreReady() && retries > 0) {
+                tryMove(facing);
+                if (rc.isCoreReady()) {
+                    facing = facing.rotateRight();
+                }
+                retries--;
             }
-            retries--;
+//        } else if (rand.nextInt(50) == 0) {
+//            tryMove(facing.opposite());
         }
     }
 }

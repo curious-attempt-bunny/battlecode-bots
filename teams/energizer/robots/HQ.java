@@ -22,8 +22,14 @@ public class HQ extends BaseRobot {
         }
 
         if (rc.isCoreReady() &&
-                rc.getTeamOre() >= RobotType.BEAVER.oreCost && countOf(RobotType.BEAVER) < 1 + countOf(RobotType.BARRACKS) + countOf(RobotType.TANKFACTORY)) {
+                rc.getTeamOre() >= RobotType.BEAVER.oreCost && countOf(RobotType.BEAVER) < maxBeavers()) {
             trySpawn(Direction.NORTH, RobotType.BEAVER);
         }
+    }
+
+    private int maxBeavers() throws GameActionException {
+        return 1 + Math.max(
+                countOf(RobotType.BARRACKS) + countOf(RobotType.TANKFACTORY),
+                countOf(RobotType.TANK)/4);
     }
 }
