@@ -7,15 +7,18 @@ import battlecode.common.*;
  */
 public class Tank extends BaseRobot {
 
+    private final int rallyIndex;
     private int movePauseTicks = 0;
 
     public Tank(RobotController _rc) throws GameActionException {
         super(_rc);
+        rallyIndex = rand.nextInt(rc.senseEnemyTowerLocations().length);
+        facing = rc.getLocation().directionTo(getRallyPoint());
     }
 
     @Override
     protected void act() throws GameActionException {
-        MapLocation rallyPoint = rc.senseEnemyHQLocation();
+        MapLocation rallyPoint = getRallyPoint();
 
         if (rc.isWeaponReady()) {
             attackSomething();
@@ -27,7 +30,11 @@ public class Tank extends BaseRobot {
             return;
         }
 
-        int nearbyTanks = countOfNearbyFriendly(RobotType.TANK, 10);
+        if (rand.nextInt(10) == 0) {
+            facing = rc.getLocation().directionTo(rallyPoint);
+        }
+
+        int nearbyTanks = countOfNearbyFriendly(RobotType.TANK, 14);
         MapLocation tower =  nearbyEnemyTower();
         if (tower == null) {
             tower = rc.senseEnemyHQLocation();
@@ -56,20 +63,31 @@ public class Tank extends BaseRobot {
 
         boolean relayVisible = isRelayVisible();
         rc.setIndicatorString(0, "relay visible? = "+relayVisible);
-        if (rc.isCoreReady() && rc.getSupplyLevel() >= 100 && relayVisible && distanceToTower >= RobotType.TOWER.attackRadiusSquared + 2) {
-            int retries = 8;
-            while (rc.isCoreReady() && retries > 0) {
-                if (!isAttackableByEnemyTowers(rc.getLocation().add(facing)) && rc.canMove(facing)) {
-                    rc.move(facing);
+        if (rc.isCoreReady()) {
+            if (rc.getSupplyLevel() >= 100 && relayVisible  && distanceToTower >= RobotType.TOWER.attackRadiusSquared + 2) {
+                int retries = 8;
+                while (rc.isCoreReady() && retries > 0) {
+                    if (!isAttackableByEnemyTowers(rc.getLocation().add(facing)) && rc.canMove(facing)) {
+                        rc.move(facing);
+                    }
+                    if (rc.isCoreReady()) {
+                        facing = facing.rotateRight();
+                    }
+                    retries--;
                 }
-                if (rc.isCoreReady()) {
-                    facing = facing.rotateRight();
-                }
-                retries--;
             }
-//        } else if (rand.nextInt(50) == 0) {
-//            tryMove(facing.opposite());
         }
+    }
+
+    private MapLocation getRallyPoint() {
+        MapLocation rallyPoint;
+        MapLocation[] towers = rc.senseEnemyTowerLocations();
+        if (rallyIndex >= towers.length) {
+            rallyPoint = rc.senseEnemyHQLocation();
+        } else {
+            rallyPoint = towers[rallyIndex%towers.length];
+        }
+        return rallyPoint;
     }
 
 
