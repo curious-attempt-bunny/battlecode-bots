@@ -23,7 +23,7 @@ public class HQ extends BaseRobot {
 
         if (rc.isCoreReady() &&
                 rc.getTeamOre() >= RobotType.BEAVER.oreCost && countOf(RobotType.BEAVER) < maxBeavers()) {
-            trySpawn(Direction.NORTH, RobotType.BEAVER);
+            trySpawn(directions[rand.nextInt(8)], RobotType.BEAVER);
         }
     }
 

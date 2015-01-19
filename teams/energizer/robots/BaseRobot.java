@@ -386,4 +386,11 @@ public abstract class BaseRobot {
         }
         return count;
     }
+
+    protected boolean isHeavyTraffic() {
+        RobotInfo[] robotInfos = rc.senseNearbyRobots(10, myTeam);
+        rc.setIndicatorString(0, "Heavy traffic? "+robotInfos.length+" nearby friends");
+
+        return robotInfos.length >= 5;
+    }
 }

@@ -16,7 +16,9 @@ public class TankFactory extends BaseRobot {
     @Override
     protected void act() throws GameActionException {
         if (rc.getTeamOre() >= RobotType.TANK.oreCost && (countOf(RobotType.TANK) < 20 || rc.getTeamOre() >= 2*RobotType.TANK.oreCost)) {
-            trySpawn(Direction.NORTH, RobotType.TANK);
+            if (!isHeavyTraffic()) {
+                trySpawn(directions[rand.nextInt(8)], RobotType.TANK);
+            }
         }
     }
 }

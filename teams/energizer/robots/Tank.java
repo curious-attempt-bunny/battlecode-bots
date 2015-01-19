@@ -8,12 +8,14 @@ import battlecode.common.*;
 public class Tank extends BaseRobot {
 
     private final int rallyIndex;
+    private final boolean rightRotation;
     private int movePauseTicks = 0;
 
     public Tank(RobotController _rc) throws GameActionException {
         super(_rc);
         rallyIndex = rand.nextInt(rc.senseEnemyTowerLocations().length);
         facing = rc.getLocation().directionTo(getRallyPoint());
+        rightRotation = rand.nextBoolean();
     }
 
     @Override
@@ -53,7 +55,7 @@ public class Tank extends BaseRobot {
                         rc.move(facing);
                     }
                     if (rc.isCoreReady()) {
-                        facing = facing.rotateRight();
+                        facing = rightRotation ? facing.rotateRight() : facing.rotateLeft();
                     }
                     retries--;
                 }
@@ -64,18 +66,31 @@ public class Tank extends BaseRobot {
         boolean relayVisible = isRelayVisible();
         rc.setIndicatorString(0, "relay visible? = "+relayVisible);
         if (rc.isCoreReady()) {
-            if (rc.getSupplyLevel() >= 100 && relayVisible  && distanceToTower >= RobotType.TOWER.attackRadiusSquared + 2) {
+            if ((rc.getSupplyLevel() >= 100 && relayVisible  && distanceToTower >= RobotType.TOWER.attackRadiusSquared + 2)
+                    || nearbyTanks >= tankPushThreshold()) {
                 int retries = 8;
                 while (rc.isCoreReady() && retries > 0) {
                     if (!isAttackableByEnemyTowers(rc.getLocation().add(facing)) && rc.canMove(facing)) {
                         rc.move(facing);
                     }
                     if (rc.isCoreReady()) {
-                        facing = facing.rotateRight();
+                        facing = rightRotation ? facing.rotateRight() : facing.rotateLeft();
                     }
                     retries--;
                 }
             }
+        }
+    }
+
+    private int tankPushThreshold() {
+        if (Clock.getRoundNum() > 1900) {
+            return 1;
+        } else if (Clock.getRoundNum() > 1800) {
+            return 2;
+        } else if (Clock.getRoundNum() > 1500) {
+            return 3;
+        } else {
+            return 5;
         }
     }
 

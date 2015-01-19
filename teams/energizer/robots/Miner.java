@@ -58,7 +58,7 @@ public class Miner extends BaseRobot {
                 if (!attackable) {
                     double orePerTurn = mineAmount(mineLocation) / costToMove;
 
-                    if (orePerTurn > bestOrePerTurn) {
+                    if (orePerTurn > bestOrePerTurn || (orePerTurn == bestOrePerTurn && rand.nextBoolean())) {
                         bestOrePerTurn = orePerTurn;
                         bestDirection = d;
                     }
