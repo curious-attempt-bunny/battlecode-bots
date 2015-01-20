@@ -34,14 +34,8 @@ public class Beaver extends BaseRobot {
                         rc.mine();
                     }
 
-                    if (rc.getSupplyLevel() < 100) {
-                        if (rand.nextInt(15) == 0) {
-                            facing = rc.getLocation().directionTo(rc.senseHQLocation());
-                        }
-                    } else {
-                        if (rand.nextInt(15) == 0 || built) {
-                            facing = rc.getLocation().directionTo(rc.senseEnemyHQLocation());
-                        }
+                    if (built || (rand.nextInt(15) == 0 && rc.getSupplyLevel() < 100)) {
+                        facing = rc.getLocation().directionTo(rc.senseHQLocation());
                     }
                 }
                 return;
@@ -60,3 +54,5 @@ public class Beaver extends BaseRobot {
         }
     }
 }
+
+
