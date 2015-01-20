@@ -1,5 +1,6 @@
 package fighter.robots;
 
+import battlecode.common.Direction;
 import battlecode.common.GameActionException;
 import battlecode.common.RobotController;
 import battlecode.common.RobotType;
@@ -15,7 +16,21 @@ public class MinerFactory extends BaseRobot {
     @Override
     protected void act() throws GameActionException {
         if (rc.isCoreReady() && rc.getTeamOre() >= RobotType.MINER.oreCost && countOf(RobotType.MINER) < maxMiners()) {
-            trySpawn(directions[rand.nextInt(8)], RobotType.MINER);
+            double bestOre = Double.MIN_VALUE;
+            Direction bestDirection = null;
+
+            for(Direction d : directions) {
+                double ore = rc.senseOre(rc.getLocation().add(d));
+                if (rc.canSpawn(d, RobotType.MINER)) {
+                    if (ore > bestOre || (ore == bestOre && rand.nextBoolean())) {
+                        bestOre = ore;
+                        bestDirection = d;
+                    }
+                }
+            }
+            if (bestDirection != null) {
+                trySpawn(bestDirection, RobotType.MINER);
+            }
         }
     }
 
