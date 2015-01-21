@@ -90,6 +90,12 @@ public abstract class BaseRobot {
 
         if (target != null) {
             rc.attackLocation(target.location);
+            if (rc.getType().attackPower >= target.health) {
+                int totalKills = rc.readBroadcast(101) + 1;
+                rc.broadcast(101, totalKills);
+                rc.setIndicatorString(1, "Total kills: "+totalKills);
+                rc.addMatchObservation("Total kills: "+totalKills);
+            }
             return true;
         } else {
             return false;
