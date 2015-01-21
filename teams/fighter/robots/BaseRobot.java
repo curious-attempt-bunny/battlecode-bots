@@ -69,7 +69,7 @@ public abstract class BaseRobot {
     // This method will attack an enemy in sight, if there is one
     protected boolean attackSomething() throws GameActionException {
         RobotInfo target = null;
-        double attackRatio = Double.MAX_VALUE;
+        double attackRatio = Double.MIN_VALUE;
 
         RobotInfo[] enemies = rc.senseNearbyRobots(myRange, enemyTeam);
         if (enemies.length > 0) {
@@ -81,8 +81,16 @@ public abstract class BaseRobot {
                 target = info;
                 break;
             }
-            double ratio = info.health; //info.type.attackPower / info.health;
-            if (ratio > attackRatio) {
+//            double ratio = info.type.oreCost * Math.ceil(info.health / rc.getType().attackPower); // 117 kills
+//            double ratio = Math.random(); // 126 kills
+//            double ratio = info.health; // 129 kills
+//            double ratio = -info.type.oreCost * Math.ceil(info.health / rc.getType().attackPower); // 147 kills
+//            double ratio = -Math.ceil(info.health / rc.getType().attackPower) + (info.type.oreCost/1000.0); // 147 kills
+//            double ratio = -Math.ceil(info.health / rc.getType().attackPower) - (info.health/100.0) + (info.type.oreCost/1000.0); // 150 kills
+//            double ratio = -Math.ceil(info.health / rc.getType().attackPower) + (info.type.attackPower/10.0) - (info.health/100.0) + (info.type.oreCost/1000.0); // 151 kills
+//            double ratio = -Math.ceil(info.health / rc.getType().attackPower); // 156 kills
+            double ratio = -info.health; // 157 kills
+            if (ratio > attackRatio || (ratio == attackRatio && rand.nextBoolean())) {
                 target = info;
                 attackRatio = ratio;
             }
