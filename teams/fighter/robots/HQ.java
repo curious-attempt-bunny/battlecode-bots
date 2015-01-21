@@ -1,9 +1,6 @@
 package fighter.robots;
 
-import battlecode.common.GameActionException;
-import battlecode.common.RobotController;
-import battlecode.common.RobotInfo;
-import battlecode.common.RobotType;
+import battlecode.common.*;
 
 /**
  * Created by home on 1/6/15.
