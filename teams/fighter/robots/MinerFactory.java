@@ -16,18 +16,7 @@ public class MinerFactory extends BaseRobot {
     @Override
     protected void act() throws GameActionException {
         if (rc.isCoreReady() && rc.getTeamOre() >= RobotType.MINER.oreCost && countOf(RobotType.MINER) < maxMiners()) {
-            double bestOre = Double.MIN_VALUE;
-            Direction bestDirection = null;
-
-            for(Direction d : directions) {
-                double ore = rc.senseOre(rc.getLocation().add(d));
-                if (rc.canSpawn(d, RobotType.MINER)) {
-                    if (ore > bestOre || (ore == bestOre && rand.nextBoolean())) {
-                        bestOre = ore;
-                        bestDirection = d;
-                    }
-                }
-            }
+            Direction bestDirection = bestOreSpawnDirection();
             if (bestDirection != null) {
                 trySpawn(bestDirection, RobotType.MINER);
             }

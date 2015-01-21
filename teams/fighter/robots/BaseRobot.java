@@ -394,4 +394,38 @@ public abstract class BaseRobot {
 
         return robotInfos.length >= 5;
     }
+
+    protected Direction bestOreSpawnDirection() {
+        double bestOre = Double.MIN_VALUE;
+        Direction bestDirection = null;
+
+        for(Direction d : directions) {
+            double ore = rc.senseOre(rc.getLocation().add(d));
+            if (rc.canSpawn(d, RobotType.MINER)) {
+                if (ore > bestOre || (ore == bestOre && rand.nextBoolean())) {
+                    bestOre = ore;
+                    bestDirection = d;
+                }
+            }
+        }
+        return bestDirection;
+    }
+
+    protected Direction bestOreBuildDirection() {
+        double bestOre = Double.MIN_VALUE;
+        Direction bestDirection = null;
+
+        for(Direction d : directions) {
+            double ore = rc.senseOre(rc.getLocation().add(d));
+            if (rc.canBuild(d, RobotType.MINERFACTORY)) {
+                if (ore > bestOre || (ore == bestOre && rand.nextBoolean())) {
+                    bestOre = ore;
+                    bestDirection = d;
+                }
+            }
+        }
+        return bestDirection;
+    }
+
+
 }
