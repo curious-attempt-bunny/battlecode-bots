@@ -36,7 +36,7 @@ public class Beaver extends BaseRobot {
                     }
 
                     if (rc.isCoreReady()) {
-                        rc.mine();
+                        mineAndTrack();
                     }
 
                     if (built || (rand.nextInt(15) == 0 && rc.getSupplyLevel() < 100)) {

@@ -18,6 +18,7 @@ public abstract class BaseRobot {
     protected RobotInfo[] nearby;
     protected boolean congested;
     protected Direction planDirection;
+    private Double minedBefore;
 
     protected BaseRobot(RobotController _rc) {
         rc = _rc;
@@ -31,6 +32,16 @@ public abstract class BaseRobot {
     public final void run() {
         while(true) {
             try {
+                if (minedBefore != null) {
+                    double minedAfter = rc.senseOre(rc.getLocation());
+                    double mined = minedBefore - minedAfter;
+                    int globallyMined = rc.readBroadcast(100) + (int) (mined*1000);
+                    rc.broadcast(100, globallyMined);
+                    rc.setIndicatorString(2, "Globally mined: "+globallyMined);
+
+                    minedBefore = null;
+                }
+
                 if (rc.isWeaponReady()) {
                     attackSomething();
                 }
@@ -427,5 +438,8 @@ public abstract class BaseRobot {
         return bestDirection;
     }
 
-
+    protected void mineAndTrack() throws GameActionException {
+        minedBefore = rc.senseOre(rc.getLocation());
+        rc.mine();
+    }
 }

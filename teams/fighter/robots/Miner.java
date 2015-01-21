@@ -30,7 +30,7 @@ public class Miner extends BaseRobot {
             }
 
             if (rc.isCoreReady()) {
-                rc.mine();
+                mineAndTrack();
             }
         }
     }
