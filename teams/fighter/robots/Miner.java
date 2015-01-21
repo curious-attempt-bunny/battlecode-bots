@@ -36,6 +36,7 @@ public class Miner extends BaseRobot {
     }
 
     private void planMine() {
+        planDirection = null;
         MapLocation[] towers = rc.senseEnemyTowerLocations();
 
         Direction bestDirection = null;
@@ -55,6 +56,18 @@ public class Miner extends BaseRobot {
                         break;
                     }
                 }
+                MapLocation retreatFrom = null;
+                if (!attackable) {
+                    RobotInfo[] enemies = rc.senseNearbyRobots(RobotType.TANK.attackRadiusSquared + 2, enemyTeam);
+
+                    for(RobotInfo r : enemies) {
+                        if (mineLocation.distanceSquaredTo(r.location) <= r.type.attackRadiusSquared+2) {
+                            attackable = true;
+                            retreatFrom = r.location;
+                            break;
+                        }
+                    }
+                }
                 if (!attackable) {
                     double orePerTurn = mineAmount(mineLocation) / costToMove;
 
@@ -63,13 +76,18 @@ public class Miner extends BaseRobot {
                         bestDirection = d;
                     }
                 }
+                if (retreatFrom != null) {
+                    planDirection = retreatFrom.directionTo(rc.getLocation());
+                }
             }
         }
 
-        if (bestOrePerTurn <= GameConstants.MINIMUM_MINE_AMOUNT) {
-            planMoveAway();
-        } else {
-            planDirection = bestDirection;
+        if (planDirection == null) {
+            if (bestOrePerTurn <= GameConstants.MINIMUM_MINE_AMOUNT) {
+                planMoveAway();
+            } else {
+                planDirection = bestDirection;
+            }
         }
     }
 

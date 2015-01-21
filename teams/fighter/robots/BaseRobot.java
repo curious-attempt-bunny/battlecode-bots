@@ -38,6 +38,7 @@ public abstract class BaseRobot {
                     int globallyMined = rc.readBroadcast(100) + (int) (mined*1000);
                     rc.broadcast(100, globallyMined);
                     rc.setIndicatorString(2, "Globally mined: "+globallyMined);
+                    rc.addMatchObservation("Globally mined: "+globallyMined);
 
                     minedBefore = null;
                 }
