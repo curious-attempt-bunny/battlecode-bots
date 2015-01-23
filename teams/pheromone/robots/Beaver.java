@@ -24,10 +24,10 @@ public class Beaver extends BaseRobot {
                     boolean built = false;
                     Direction buildDirection = facing.rotateRight().rotateRight().rotateRight();
                     if (rc.getTeamOre() >= RobotType.MINERFACTORY.oreCost && countOf(RobotType.MINERFACTORY) == 0) {
-                        Direction bestOrdeBuildDirection = bestOreBuildDirection();
-                        if (bestOrdeBuildDirection != null) {
-                            buildDirection = bestOrdeBuildDirection;
-                        }
+//                        Direction bestOrdeBuildDirection = bestOreBuildDirection();
+//                        if (bestOrdeBuildDirection != null) {
+//                            buildDirection = bestOrdeBuildDirection;
+//                        }
                         built = tryBuild(buildDirection, RobotType.MINERFACTORY);
                     } else if (rc.getTeamOre() >= RobotType.BARRACKS.oreCost && countOf(RobotType.BARRACKS) == 0 && countOf(RobotType.MINER) >= 5) {
                         built = tryBuild(buildDirection, RobotType.BARRACKS);
