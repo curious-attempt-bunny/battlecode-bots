@@ -42,6 +42,7 @@ public class Miner extends BaseRobot {
     private void planMine() {
         planDirection = null;
         MapLocation[] towers = rc.senseEnemyTowerLocations();
+        RobotInfo[] enemies = rc.senseNearbyRobots(RobotType.TANK.attackRadiusSquared + 2, enemyTeam);
 
         Direction bestDirection = null;
         double bestOrePerTurn = mineAmount(rc.getLocation());
@@ -62,8 +63,6 @@ public class Miner extends BaseRobot {
                 }
                 MapLocation retreatFrom = null;
                 if (!attackable) {
-                    RobotInfo[] enemies = rc.senseNearbyRobots(RobotType.TANK.attackRadiusSquared + 2, enemyTeam);
-
                     for(RobotInfo r : enemies) {
                         if (mineLocation.distanceSquaredTo(r.location) <= r.type.attackRadiusSquared+2) {
                             attackable = true;

@@ -63,12 +63,29 @@ public class Beaver extends BaseRobot {
                 }
             }
 
+            RobotInfo[] enemies = rc.senseNearbyRobots(RobotType.TANK.attackRadiusSquared + 2, enemyTeam);
             int retries = 8;
             while (rc.isCoreReady() && retries > 0) {
-                if (!isAttackableByEnemyTowers(rc.getLocation().add(facing)) && rc.canMove(facing)) {
-                    rc.move(facing);
+                MapLocation nextLocation = rc.getLocation().add(facing);
+                boolean attackable = isAttackableByEnemyTowers(nextLocation);
+                MapLocation retreatFrom = null;
+
+                if (!attackable) {
+                    for(RobotInfo r : enemies) {
+                        if (nextLocation.distanceSquaredTo(r.location) <= r.type.attackRadiusSquared+2) {
+                            attackable = true;
+                            retreatFrom = r.location;
+                            break;
+                        }
+                    }
                 }
-                if (rc.isCoreReady()) {
+
+                if (!attackable && rc.canMove(facing)) {
+                    rc.move(facing);
+                } else if (retreatFrom != null) {
+                    facing = retreatFrom.directionTo(rc.getLocation());
+                    tryMove(facing);
+                } else if (rc.isCoreReady()) {
                     facing = facing.rotateRight();
                 }
                 retries--;
