@@ -18,16 +18,22 @@ public class Beaver extends BaseRobot {
             attackSomething();
         }
 
+        // nynyn
+        // ynnny
+        // nnnnn
+        // ynnny
+        // nynyn
+
         if (rc.isCoreReady()) {
             if (!isRelayVisible()) {
+                Direction buildDirection = getBuildDirection();
                 if (countOf(RobotType.TANK) == 0 || countOfNearbyFriendly(RobotType.TANK, 2*GameConstants.SUPPLY_TRANSFER_RADIUS_SQUARED) > 0) {
                     boolean built = false;
-                    Direction buildDirection = facing.rotateRight().rotateRight().rotateRight();
                     if (rc.getTeamOre() >= RobotType.MINERFACTORY.oreCost && countOf(RobotType.MINERFACTORY) == 0) {
-                        Direction bestOrdeBuildDirection = bestOreBuildDirection();
-                        if (bestOrdeBuildDirection != null) {
-                            buildDirection = bestOrdeBuildDirection;
-                        }
+//                        Direction bestOrdeBuildDirection = bestOreBuildDirection();
+//                        if (bestOrdeBuildDirection != null) {
+//                            buildDirection = bestOrdeBuildDirection;
+//                        }
                         built = tryBuild(buildDirection, RobotType.MINERFACTORY);
                     } else if (rc.getTeamOre() >= RobotType.BARRACKS.oreCost && countOf(RobotType.BARRACKS) == 0 && countOf(RobotType.MINER) >= 5) {
                         built = tryBuild(buildDirection, RobotType.BARRACKS);
@@ -62,6 +68,10 @@ public class Beaver extends BaseRobot {
                 retries--;
             }
         }
+    }
+
+    private Direction getBuildDirection() {
+        return facing.rotateRight().rotateRight().rotateRight();
     }
 }
 
