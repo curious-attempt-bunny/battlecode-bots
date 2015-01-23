@@ -97,10 +97,7 @@ public class Beaver extends BaseRobot {
 
                 if (buildLocations[x][y] == 1) {
                     direction = d;
-                    rc.setIndicatorDot(rc.getLocation().add(d), 100, 100, 100);
                     break;
-                } else {
-                    rc.setIndicatorDot(rc.getLocation().add(d), 0, 0, 0);
                 }
             }
         }

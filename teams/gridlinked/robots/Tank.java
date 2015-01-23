@@ -70,15 +70,24 @@ public class Tank extends BaseRobot {
         if (rc.isCoreReady()) {
             if ((rc.getSupplyLevel() >= 100 && relayVisible  && distanceToTower >= RobotType.TOWER.attackRadiusSquared + 2)
                     || nearbyTanks >= tankPushThreshold()) {
-                int retries = 8;
-                while (rc.isCoreReady() && retries > 0) {
-                    if (!isAttackableByEnemyTowers(rc.getLocation().add(facing)) && rc.canMove(facing)) {
-                        rc.move(facing);
+                Direction actuallyFacing = facing;
+                Direction moveDir = getMoveDir(rc.getLocation().add(facing));
+                if (moveDir != null) {
+                    rc.move(moveDir);
+                    facing = actuallyFacing;
+                }
+
+                if (rc.isCoreReady()) {
+                    int retries = 8;
+                    while (rc.isCoreReady() && retries > 0) {
+                        if (!isAttackableByEnemyTowers(rc.getLocation().add(facing)) && rc.canMove(facing)) {
+                            rc.move(facing);
+                        }
+                        if (rc.isCoreReady()) {
+                            facing = rightRotation ? facing.rotateRight() : facing.rotateLeft();
+                        }
+                        retries--;
                     }
-                    if (rc.isCoreReady()) {
-                        facing = rightRotation ? facing.rotateRight() : facing.rotateLeft();
-                    }
-                    retries--;
                 }
             }
         }
@@ -122,5 +131,24 @@ public class Tank extends BaseRobot {
         }
 
         return bestTower;
+    }
+
+    public Direction[] getDirectionsToward(MapLocation dest) {
+        Direction toDest = rc.getLocation().directionTo(dest);
+        Direction[] dirs = {toDest,
+                toDest.rotateLeft(), toDest.rotateRight(),
+                toDest.rotateLeft().rotateLeft(), toDest.rotateRight().rotateRight()};
+
+        return dirs;
+    }
+
+    public Direction getMoveDir(MapLocation dest) {
+        Direction[] dirs = getDirectionsToward(dest);
+        for (Direction d : dirs) {
+            if (rc.canMove(d) && !isAttackableByEnemyTowers(rc.getLocation().add(d))) {
+                return d;
+            }
+        }
+        return null;
     }
 }
