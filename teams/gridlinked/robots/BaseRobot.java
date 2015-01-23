@@ -2,7 +2,9 @@ package gridlinked.robots;
 
 import battlecode.common.*;
 
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
 
 /**
  * Created by home on 1/6/15.
@@ -413,6 +415,17 @@ public abstract class BaseRobot {
     protected int countOfNearbyFriendly(RobotType type, int radiusSquared) {
         int count = 0;
         RobotInfo[] friendlies = rc.senseNearbyRobots(radiusSquared, myTeam);
+        for(RobotInfo r : friendlies) {
+            if (r.type == type) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    protected int countOfNearbyEnemy(RobotType type, int radiusSquared) {
+        int count = 0;
+        RobotInfo[] friendlies = rc.senseNearbyRobots(radiusSquared, enemyTeam);
         for(RobotInfo r : friendlies) {
             if (r.type == type) {
                 count++;

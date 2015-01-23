@@ -3,12 +3,16 @@ package gridlinked.robots;
 import battlecode.common.*;
 import gridlinked.CoordinateSystem;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Created by home on 1/6/15.
  */
 public class Beaver extends BaseRobot {
 
     private final CoordinateSystem coordinateSystem;
+    private final Set<MapLocation> builtLocations = new HashSet<MapLocation>();
 
     public Beaver(RobotController _rc) {
         super(_rc);
@@ -35,7 +39,7 @@ public class Beaver extends BaseRobot {
                 if (rc.getTeamOre() >= RobotType.TANKFACTORY.oreCost && rc.hasBuildRequirements(RobotType.TANKFACTORY) &&
                         (countOf(RobotType.TANKFACTORY) == 0 || rc.getTeamOre() > Math.min(3000, 1500*countOf(RobotType.TANKFACTORY))) &&
                         (!congested || rc.getTeamOre() > 2000)) {
-                    tryBuild(buildDirection, RobotType.TANKFACTORY);
+                    doBuild(buildDirection, RobotType.TANKFACTORY);
                 }
             } else if (relayCount == 0) {
                 if (buildDirection != null) {
@@ -51,17 +55,17 @@ public class Beaver extends BaseRobot {
                         }
                     } else if (countOf(RobotType.BARRACKS) == 0) {
                         if (rc.getTeamOre() >= RobotType.BARRACKS.oreCost) {
-                            built = tryBuild(buildDirection, RobotType.BARRACKS);
+                            built = doBuild(buildDirection, RobotType.BARRACKS);
                         }
-                    } else if (countOf(RobotType.TANK) == 0 || countOfNearbyFriendly(RobotType.TANK, 2*GameConstants.SUPPLY_TRANSFER_RADIUS_SQUARED) > 0) {
+                    } else if (countOf(RobotType.TANK) == 0 || countOfNearbyFriendly(RobotType.TANK, 2 * GameConstants.SUPPLY_TRANSFER_RADIUS_SQUARED) > 0 || 2*rc.getLocation().distanceSquaredTo(rc.senseEnemyHQLocation()) > 3*rc.getLocation().distanceSquaredTo(rc.senseHQLocation())) {
                         if (rc.getTeamOre() >= RobotType.TANKFACTORY.oreCost && rc.hasBuildRequirements(RobotType.TANKFACTORY) &&
                                 (countOf(RobotType.TANKFACTORY) == 0 || rc.getTeamOre() > Math.min(3000, 1500*countOf(RobotType.TANKFACTORY))) &&
                                 (!congested || rc.getTeamOre() > 2000)) {
-                            built = tryBuild(buildDirection, RobotType.TANKFACTORY);
+                            built = doBuild(buildDirection, RobotType.TANKFACTORY);
                         } else if (rc.getTeamOre() >= RobotType.TECHNOLOGYINSTITUTE.oreCost && (congested || countOf(RobotType.TANK) > 0) && countOfNearbyFriendly(RobotType.TECHNOLOGYINSTITUTE, 20*20) == 0) {
-                            built = tryBuild(buildDirection, RobotType.TECHNOLOGYINSTITUTE);
+                            built = doBuild(buildDirection, RobotType.TECHNOLOGYINSTITUTE);
                         } else if (rc.getTeamOre() >= RobotType.SUPPLYDEPOT.oreCost && 5*countOf(RobotType.SUPPLYDEPOT) < 4*countOf(RobotType.COMPUTER)) {
-                            built = tryBuild(buildDirection, RobotType.SUPPLYDEPOT);
+                            built = doBuild(buildDirection, RobotType.SUPPLYDEPOT);
                         }
                     }
 
@@ -106,6 +110,12 @@ public class Beaver extends BaseRobot {
         }
     }
 
+    private boolean doBuild(Direction buildDirection, RobotType type) throws GameActionException {
+        rc.build(buildDirection, type);
+        builtLocations.add(rc.getLocation().add(buildDirection));
+        return true;
+    }
+
     static int[][] buildLocations = new int[][] {
             new int[] { 0, 1, 0, 1, 0 },
             new int[] { 1, 0, 0, 0, 1 },
@@ -121,7 +131,8 @@ public class Beaver extends BaseRobot {
         Direction direction = null;
 
         for(Direction d : directions) {
-            if (rc.senseTerrainTile(rc.getLocation().add(d)).isTraversable()) {
+            MapLocation location = rc.getLocation().add(d);
+            if (!builtLocations.contains(location) && rc.senseTerrainTile(location).isTraversable()) {
                 int x = (5 + d.dx + gx)%5;
                 int y = (5 + d.dy + gy)%5;
 
