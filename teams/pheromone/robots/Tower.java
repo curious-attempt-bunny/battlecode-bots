@@ -13,6 +13,8 @@ public class Tower extends BaseRobot {
 
     @Override
     protected void act() throws GameActionException {
-
+        if (rc.isWeaponReady()) {
+            attackSomething();
+        }
     }
 }

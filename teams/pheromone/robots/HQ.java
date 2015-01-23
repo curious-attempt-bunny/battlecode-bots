@@ -15,6 +15,10 @@ public class HQ extends BaseRobot {
 
     @Override
     protected void act() throws GameActionException {
+        if (rc.isWeaponReady()) {
+            attackSomething();
+        }
+
         RobotInfo[] myRobots = rc.senseNearbyRobots(999999, myTeam);
         int[] counts = new int[RobotType.MISSILE.ordinal()+1];
         for (RobotInfo r : myRobots) {

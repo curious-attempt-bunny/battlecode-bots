@@ -43,10 +43,6 @@ public abstract class BaseRobot {
                     minedBefore = null;
                 }
 
-                if (rc.isWeaponReady()) {
-                    attackSomething();
-                }
-
                 nearby = rc.senseNearbyRobots(GameConstants.SUPPLY_TRANSFER_RADIUS_SQUARED, myTeam);
                 congested = isCongested();
 
@@ -308,7 +304,7 @@ public abstract class BaseRobot {
             }
         }
 
-        rc.setIndicatorString(1, "Obstruction: clear count = "+clearCount+". Congested? = "+(clearCount <= 3));
+//        rc.setIndicatorString(1, "Obstruction: clear count = "+clearCount+". Congested? = "+(clearCount <= 3));
 
         return clearCount < 3;
     }
@@ -334,7 +330,7 @@ public abstract class BaseRobot {
 //            planDirection = null;
         }
 
-        rc.setIndicatorString(0, planDirection + " from vector " + x + "," + y);
+//        rc.setIndicatorString(0, planDirection + " from vector " + x + "," + y);
     }
 
     private Direction vectorToDirection(double x, double y) {
@@ -416,7 +412,7 @@ public abstract class BaseRobot {
 
     protected boolean isHeavyTraffic() {
         RobotInfo[] robotInfos = rc.senseNearbyRobots(10, myTeam);
-        rc.setIndicatorString(0, "Heavy traffic? "+robotInfos.length+" nearby friends");
+//        rc.setIndicatorString(0, "Heavy traffic? "+robotInfos.length+" nearby friends");
 
         return robotInfos.length >= 5;
     }

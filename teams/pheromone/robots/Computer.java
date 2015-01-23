@@ -38,7 +38,7 @@ public class Computer extends BaseRobot {
                 }
             }
 
-            rc.setIndicatorString(0, "Searching for station = "+searchingForStation+" best distance = "+bestDistance+ "(vs "+GameConstants.SUPPLY_TRANSFER_RADIUS_SQUARED+")");
+//            rc.setIndicatorString(0, "Searching for station = "+searchingForStation+" best distance = "+bestDistance+ "(vs "+GameConstants.SUPPLY_TRANSFER_RADIUS_SQUARED+")");
             if (searchingForStation) {
                 int retries = 8;
                 while (rc.isCoreReady() && retries > 0) {

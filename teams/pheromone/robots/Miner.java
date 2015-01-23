@@ -12,6 +12,10 @@ public class Miner extends BaseRobot {
 
     @Override
     protected void act() throws GameActionException {
+        if (rc.isWeaponReady()) {
+            attackSomething();
+        }
+
         if (rc.isCoreReady()) {
             planMine();
 

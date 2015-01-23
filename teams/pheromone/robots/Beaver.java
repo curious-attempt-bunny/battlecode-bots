@@ -14,6 +14,10 @@ public class Beaver extends BaseRobot {
 
     @Override
     protected void act() throws GameActionException {
+        if (rc.isWeaponReady()) {
+            attackSomething();
+        }
+
         if (rc.isCoreReady()) {
             if (!isRelayVisible()) {
                 if (countOf(RobotType.TANK) == 0 || countOfNearbyFriendly(RobotType.TANK, 2*GameConstants.SUPPLY_TRANSFER_RADIUS_SQUARED) > 0) {
