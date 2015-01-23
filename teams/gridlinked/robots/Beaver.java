@@ -39,21 +39,22 @@ public class Beaver extends BaseRobot {
                 }
             } else if (relayCount == 0) {
                 if (buildDirection != null) {
-//                    if (countOf(RobotType.TANK) == 0 || countOfNearbyFriendly(RobotType.TANK, 2*GameConstants.SUPPLY_TRANSFER_RADIUS_SQUARED) > 0) {
-                        boolean built = false;
-                        if (countOf(RobotType.MINERFACTORY) == 0) {
-                            if (rc.getTeamOre() >= RobotType.MINERFACTORY.oreCost) {
-        //                        Direction bestOrdeBuildDirection = bestOreBuildDirection();
-        //                        if (bestOrdeBuildDirection != null) {
-        //                            buildDirection = bestOrdeBuildDirection;
-        //                        }
-                                built = tryBuild(buildDirection, RobotType.MINERFACTORY);
-                            }
-                        } else if (countOf(RobotType.BARRACKS) == 0) {
-                            if (rc.getTeamOre() >= RobotType.BARRACKS.oreCost) {
-                                built = tryBuild(buildDirection, RobotType.BARRACKS);
-                            }
-                        } else if (rc.getTeamOre() >= RobotType.TANKFACTORY.oreCost && rc.hasBuildRequirements(RobotType.TANKFACTORY) &&
+
+                    boolean built = false;
+                    if (countOf(RobotType.MINERFACTORY) == 0) {
+                        if (rc.getTeamOre() >= RobotType.MINERFACTORY.oreCost) {
+    //                        Direction bestOrdeBuildDirection = bestOreBuildDirection();
+    //                        if (bestOrdeBuildDirection != null) {
+    //                            buildDirection = bestOrdeBuildDirection;
+    //                        }
+                            built = tryBuild(buildDirection, RobotType.MINERFACTORY);
+                        }
+                    } else if (countOf(RobotType.BARRACKS) == 0) {
+                        if (rc.getTeamOre() >= RobotType.BARRACKS.oreCost) {
+                            built = tryBuild(buildDirection, RobotType.BARRACKS);
+                        }
+                    } else if (countOf(RobotType.TANK) == 0 || countOfNearbyFriendly(RobotType.TANK, 2*GameConstants.SUPPLY_TRANSFER_RADIUS_SQUARED) > 0) {
+                        if (rc.getTeamOre() >= RobotType.TANKFACTORY.oreCost && rc.hasBuildRequirements(RobotType.TANKFACTORY) &&
                                 (countOf(RobotType.TANKFACTORY) == 0 || rc.getTeamOre() > Math.min(3000, 1500*countOf(RobotType.TANKFACTORY))) &&
                                 (!congested || rc.getTeamOre() > 2000)) {
                             built = tryBuild(buildDirection, RobotType.TANKFACTORY);
@@ -62,15 +63,15 @@ public class Beaver extends BaseRobot {
                         } else if (rc.getTeamOre() >= RobotType.SUPPLYDEPOT.oreCost && 5*countOf(RobotType.SUPPLYDEPOT) < 4*countOf(RobotType.COMPUTER)) {
                             built = tryBuild(buildDirection, RobotType.SUPPLYDEPOT);
                         }
+                    }
 
-                        if (rc.isCoreReady()) {
-                            mineAndTrack();
-                        }
+                    if (rc.isCoreReady()) {
+                        mineAndTrack();
+                    }
 
-                        if (built || (rand.nextInt(15) == 0 && rc.getSupplyLevel() < 100)) {
-                            facing = rc.getLocation().directionTo(rc.senseHQLocation());
-                        }
-//                    }
+                    if (built || (rand.nextInt(15) == 0 && rc.getSupplyLevel() < 100)) {
+                        facing = rc.getLocation().directionTo(rc.senseHQLocation());
+                    }
                     return;
                 }
             }

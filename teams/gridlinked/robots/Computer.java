@@ -1,20 +1,23 @@
 package gridlinked.robots;
 
-import battlecode.common.GameActionException;
-import battlecode.common.GameConstants;
-import battlecode.common.RobotController;
-import battlecode.common.RobotInfo;
+import battlecode.common.*;
 
 /**
  * Created by home on 1/18/15.
  */
 public class Computer extends BaseRobot {
 
+    private Integer rallyIndex;
     private boolean searchingForStation;
 
     public Computer(RobotController _rc) {
         super(_rc);
         searchingForStation = true;
+        if (rand.nextInt(2) == 0) {
+            facing = rc.getLocation().directionTo(rc.senseHQLocation()).opposite();
+            int towers = rc.senseEnemyTowerLocations().length;
+            rallyIndex = towers == 0 ? 0 : rand.nextInt(towers);
+        }
     }
 
     @Override
@@ -38,6 +41,10 @@ public class Computer extends BaseRobot {
                 }
             }
 
+            if (rallyIndex != null && rand.nextInt(10) == 0) {
+                facing = rc.getLocation().directionTo(getRallyPoint());
+            }
+
 //            rc.setIndicatorString(0, "Searching for station = "+searchingForStation+" best distance = "+bestDistance+ "(vs "+GameConstants.SUPPLY_TRANSFER_RADIUS_SQUARED+")");
             if (searchingForStation) {
                 int retries = 8;
@@ -53,4 +60,16 @@ public class Computer extends BaseRobot {
             }
         }
     }
+
+    private MapLocation getRallyPoint() {
+        MapLocation rallyPoint;
+        MapLocation[] towers = rc.senseEnemyTowerLocations();
+        if (rallyIndex >= towers.length) {
+            rallyPoint = rc.senseEnemyHQLocation();
+        } else {
+            rallyPoint = towers[rallyIndex%towers.length];
+        }
+        return rallyPoint;
+    }
+
 }
