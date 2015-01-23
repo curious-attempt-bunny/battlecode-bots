@@ -291,10 +291,10 @@ public abstract class BaseRobot {
         for(Direction d : directions) {
             MapLocation target = rc.getLocation();
             boolean clear = true;
-            for(int extent = 0; extent<5; extent++) {
+            for(int extent = 0; extent<3; extent++) {
                 target = target.add(d);
                 TerrainTile terrainTile = rc.senseTerrainTile(target);
-                if (!terrainTile.isTraversable()) {
+                if (terrainTile != TerrainTile.NORMAL) {
                     clear = false;
                     break;
                 }
@@ -306,7 +306,7 @@ public abstract class BaseRobot {
 
 //        rc.setIndicatorString(1, "Obstruction: clear count = "+clearCount+". Congested? = "+(clearCount <= 3));
 
-        return clearCount < 3;
+        return clearCount < 6;
     }
 
     protected void planMoveAway() {
@@ -384,6 +384,17 @@ public abstract class BaseRobot {
             }
         }
         return isRelayVisible;
+    }
+
+    protected int relayCount() {
+        int count = 0;
+
+        for(RobotInfo r : nearby) {
+            if (isSupplyRelay(r.type)) {
+                count++;
+            }
+        }
+        return count;
     }
 
     protected boolean isAttackableByEnemyTowers(MapLocation target) {

@@ -29,8 +29,15 @@ public class Beaver extends BaseRobot {
         // nynyn
 
         if (rc.isCoreReady()) {
-            if (!isRelayVisible()) {
-                Direction buildDirection = getBuildDirection();
+            Direction buildDirection = getBuildDirection();
+            int relayCount = relayCount();
+            if (relayCount == 1) {
+                if (rc.getTeamOre() >= RobotType.TANKFACTORY.oreCost && rc.hasBuildRequirements(RobotType.TANKFACTORY) &&
+                        (countOf(RobotType.TANKFACTORY) == 0 || rc.getTeamOre() > Math.min(3000, 1500*countOf(RobotType.TANKFACTORY))) &&
+                        (!congested || rc.getTeamOre() > 2000)) {
+                    tryBuild(buildDirection, RobotType.TANKFACTORY);
+                }
+            } else if (relayCount == 0) {
                 if (buildDirection != null) {
                     if (countOf(RobotType.TANK) == 0 || countOfNearbyFriendly(RobotType.TANK, 2*GameConstants.SUPPLY_TRANSFER_RADIUS_SQUARED) > 0) {
                         boolean built = false;
@@ -43,9 +50,10 @@ public class Beaver extends BaseRobot {
                         } else if (rc.getTeamOre() >= RobotType.BARRACKS.oreCost && countOf(RobotType.BARRACKS) == 0 && countOf(RobotType.MINER) >= 5) {
                             built = tryBuild(buildDirection, RobotType.BARRACKS);
                         } else if (rc.getTeamOre() >= RobotType.TANKFACTORY.oreCost && rc.hasBuildRequirements(RobotType.TANKFACTORY) &&
-                                (countOf(RobotType.TANKFACTORY) == 0 || rc.getTeamOre() > Math.min(3000, 1500*countOf(RobotType.TANKFACTORY)))) {
+                                (countOf(RobotType.TANKFACTORY) == 0 || rc.getTeamOre() > Math.min(3000, 1500*countOf(RobotType.TANKFACTORY))) &&
+                                (!congested || rc.getTeamOre() > 2000)) {
                             built = tryBuild(buildDirection, RobotType.TANKFACTORY);
-                        } else if (rc.getTeamOre() >= RobotType.TECHNOLOGYINSTITUTE.oreCost && countOf(RobotType.TANK) > 0 && countOfNearbyFriendly(RobotType.TECHNOLOGYINSTITUTE, 20*20) == 0) {
+                        } else if (rc.getTeamOre() >= RobotType.TECHNOLOGYINSTITUTE.oreCost && (congested || countOf(RobotType.TANK) > 0) && countOfNearbyFriendly(RobotType.TECHNOLOGYINSTITUTE, 20*20) == 0) {
                             built = tryBuild(buildDirection, RobotType.TECHNOLOGYINSTITUTE);
                         } else if (rc.getTeamOre() >= RobotType.SUPPLYDEPOT.oreCost && 5*countOf(RobotType.SUPPLYDEPOT) < 4*countOf(RobotType.COMPUTER)) {
                             built = tryBuild(buildDirection, RobotType.SUPPLYDEPOT);
