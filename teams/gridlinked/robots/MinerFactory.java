@@ -24,7 +24,7 @@ public class MinerFactory extends BaseRobot {
     }
 
     private int maxMiners() throws GameActionException {
-        return countOf(RobotType.TANKFACTORY) >= 1 ? 20 : 10;
+        return 20;
     }
 
 }
