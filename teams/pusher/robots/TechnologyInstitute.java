@@ -1,4 +1,4 @@
-package gridlinked.robots;
+package pusher.robots;
 
 import battlecode.common.Clock;
 import battlecode.common.GameActionException;

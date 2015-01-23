@@ -1,4 +1,4 @@
-package gridlinked;
+package pusher;
 
 import battlecode.common.GameConstants;
 import battlecode.common.MapLocation;

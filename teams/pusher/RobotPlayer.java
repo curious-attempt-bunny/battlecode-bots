@@ -1,9 +1,9 @@
-package gridlinked;
+package pusher;
 
 import battlecode.common.GameActionException;
 import battlecode.common.RobotController;
 import battlecode.common.RobotType;
-import gridlinked.robots.*;
+import pusher.robots.*;
 
 /**
  * Created by home on 1/6/15.

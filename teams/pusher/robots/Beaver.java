@@ -1,7 +1,7 @@
-package gridlinked.robots;
+package pusher.robots;
 
 import battlecode.common.*;
-import gridlinked.CoordinateSystem;
+import pusher.CoordinateSystem;
 
 import java.util.HashSet;
 import java.util.Set;
