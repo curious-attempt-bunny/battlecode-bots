@@ -25,7 +25,7 @@ public class Computer extends BaseRobot {
         if (rc.isCoreReady()) {
             int bestDistance = Integer.MAX_VALUE;
             if (searchingForStation) {
-                for(RobotInfo r : nearby) {
+                for(RobotInfo r : nearby()) {
                     if (isSupplyRelay(r.type)) {
                         int distance = rc.getLocation().distanceSquaredTo(r.location);
                         if (distance < bestDistance) {

@@ -28,4 +28,8 @@ public class CoordinateSystem {
         return loc.add(topLeft.x, topLeft.y);
     }
 
+    public int broadcastOffsetForNormalizated(MapLocation loc) {
+        return loc.y*MAP_WIDTH + loc.x;
+    }
+
 }

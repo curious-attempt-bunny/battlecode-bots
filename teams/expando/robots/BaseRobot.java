@@ -15,8 +15,8 @@ public abstract class BaseRobot {
     static Direction[] directions = {Direction.NORTH, Direction.NORTH_EAST, Direction.EAST, Direction.SOUTH_EAST, Direction.SOUTH, Direction.SOUTH_WEST, Direction.WEST, Direction.NORTH_WEST};
     protected final Random rand;
     protected Direction facing;
-    protected RobotInfo[] nearby;
-    protected boolean congested;
+    private RobotInfo[] nearby;
+    private Boolean congested;
     protected Direction planDirection;
     private Double minedBefore;
 
@@ -43,8 +43,8 @@ public abstract class BaseRobot {
                     minedBefore = null;
                 }
 
-                nearby = rc.senseNearbyRobots(GameConstants.SUPPLY_TRANSFER_RADIUS_SQUARED, myTeam);
-                congested = isCongested();
+                nearby = null;
+                congested = null;
 
                 act();
                 transferSupply();
@@ -220,21 +220,21 @@ public abstract class BaseRobot {
     }
 
     protected void transferSupply() throws GameActionException {
-        if (Clock.getBytecodesLeft() < 250) return;
+        if (Clock.getBytecodesLeft() < 1000) return;
         double mySupply = rc.getSupplyLevel();
         if (mySupply > 250) {
             RobotInfo[] myRobots = rc.senseNearbyRobots(GameConstants.SUPPLY_TRANSFER_RADIUS_SQUARED, myTeam);
             MapLocation target = null;
 
             for(RobotInfo info : myRobots) {
-                if (Clock.getBytecodesLeft() < 500) return;
+                if (Clock.getBytecodesLeft() <= 600) return;
                 if (info.supplyLevel < mySupply/2) {
                     target = info.location;
                     break;
                 }
             }
 
-            if (target != null) {
+            if (target != null && Clock.getBytecodesLeft() > 600) {
                 rc.transferSupplies((int)(mySupply/2), target);
             }
         }
@@ -266,7 +266,8 @@ public abstract class BaseRobot {
         return target != null;
     }
 
-    private boolean isCongested() {
+    protected boolean isCongested() {
+        if (congested != null) return congested;
 //        int xMin = rc.getLocation().x - 4;
 //        int xMax = rc.getLocation().x + 4;
 //        int yMin = rc.getLocation().y - 4;
@@ -306,7 +307,8 @@ public abstract class BaseRobot {
 
 //        rc.setIndicatorString(1, "Obstruction: clear count = "+clearCount+". Congested? = "+(clearCount <= 3));
 
-        return clearCount < 6;
+        congested = clearCount < 6;
+        return congested;
     }
 
     protected void planMoveAway() {
@@ -314,7 +316,7 @@ public abstract class BaseRobot {
         int sumY = 0;
         double count = 0;
 
-        for(RobotInfo r : nearby) {
+        for(RobotInfo r : nearby()) {
             int multiplier = (isSupplyRelay(r.type) ? 1 : 10);
             sumX += multiplier*(r.location.x - rc.getLocation().x);
             sumY += multiplier*(r.location.y - rc.getLocation().y);
@@ -377,7 +379,7 @@ public abstract class BaseRobot {
     protected boolean isRelayVisible() {
         boolean isRelayVisible = false;
 
-        for(RobotInfo r : nearby) {
+        for(RobotInfo r : nearby()) {
             if (isSupplyRelay(r.type)) {
                 isRelayVisible = true;
                 break;
@@ -389,12 +391,19 @@ public abstract class BaseRobot {
     protected int relayCount() {
         int count = 0;
 
-        for(RobotInfo r : nearby) {
+        for(RobotInfo r : nearby()) {
             if (isSupplyRelay(r.type)) {
                 count++;
             }
         }
         return count;
+    }
+
+    protected RobotInfo[] nearby() {
+        if (nearby == null) {
+            nearby = rc.senseNearbyRobots(GameConstants.SUPPLY_TRANSFER_RADIUS_SQUARED, myTeam);
+        }
+        return nearby;
     }
 
     protected boolean isAttackableByEnemyTowers(MapLocation target) {
