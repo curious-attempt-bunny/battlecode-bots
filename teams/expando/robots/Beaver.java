@@ -56,9 +56,9 @@ public class Beaver extends BaseRobot {
                                 (countOf(RobotType.TANKFACTORY) == 0 || rc.getTeamOre() > Math.min(3000, 1500*countOf(RobotType.TANKFACTORY))) &&
                                 (!congested || rc.getTeamOre() > 2000)) {
                             built = doBuild(buildDirection, RobotType.TANKFACTORY);
-                        } else if (rc.getTeamOre() >= RobotType.TECHNOLOGYINSTITUTE.oreCost && (congested || countOf(RobotType.TANK) > 0) && countOfNearbyFriendly(RobotType.TECHNOLOGYINSTITUTE, 20*20) == 0) {
-                            built = doBuild(buildDirection, RobotType.TECHNOLOGYINSTITUTE);
-                        } else if (rc.getTeamOre() >= RobotType.SUPPLYDEPOT.oreCost && 5*countOf(RobotType.SUPPLYDEPOT) < 4*countOf(RobotType.COMPUTER)) {
+//                        } else if (rc.getTeamOre() >= RobotType.TECHNOLOGYINSTITUTE.oreCost && (congested || countOf(RobotType.TANK) > 0) && countOfNearbyFriendly(RobotType.TECHNOLOGYINSTITUTE, 20*20) == 0) {
+//                            built = doBuild(buildDirection, RobotType.TECHNOLOGYINSTITUTE);
+                        } else if (rc.getTeamOre() >= RobotType.SUPPLYDEPOT.oreCost) { // && 5*countOf(RobotType.SUPPLYDEPOT) < 4*countOf(RobotType.COMPUTER)) {
                             built = doBuild(buildDirection, RobotType.SUPPLYDEPOT);
                         }
                     }
@@ -110,34 +110,8 @@ public class Beaver extends BaseRobot {
         return true;
     }
 
-    static int[][] buildLocations = new int[][] {
-            new int[] { 0, 1, 0, 1, 0 },
-            new int[] { 1, 0, 0, 0, 1 },
-            new int[] { 0, 0, 0, 0, 0 },
-            new int[] { 1, 0, 0, 0, 1 },
-            new int[] { 0, 1, 0, 1, 0 },
-    };
-
     private Direction getBuildDirection() {
-        MapLocation normalizedLocation = coordinateSystem.toNormalized(rc.getLocation());
-        int gx = normalizedLocation.x % 5;
-        int gy = normalizedLocation.y % 5;
-        Direction direction = null;
-
-        for(Direction d : directions) {
-            MapLocation location = rc.getLocation().add(d);
-            if (!builtLocations.contains(location) && rc.senseTerrainTile(location).isTraversable()) {
-                int x = (5 + d.dx + gx)%5;
-                int y = (5 + d.dy + gy)%5;
-
-                if (buildLocations[x][y] == 1) {
-                    direction = d;
-                    break;
-                }
-            }
-        }
-
-        return direction;
+        return facing.rotateRight().rotateRight().rotateRight();
     }
 }
 
