@@ -33,6 +33,7 @@ public class Beaver extends BaseRobot {
 //                    if (buildDirection != null) {
 
                         boolean built = false;
+                        boolean shouldWait = false;
                         if (countOf(RobotType.MINERFACTORY) == 0) {
                             if (rc.getTeamOre() >= RobotType.MINERFACTORY.oreCost) {
         //                        Direction bestOrdeBuildDirection = bestOreBuildDirection();
@@ -40,25 +41,37 @@ public class Beaver extends BaseRobot {
         //                            buildDirection = bestOrdeBuildDirection;
         //                        }
                                 built = tryBuild(buildDirection, RobotType.MINERFACTORY);
+                            } else {
+                                shouldWait = true;
                             }
                         } else if (countOf(RobotType.BARRACKS) == 0) {
                             if (rc.getTeamOre() >= RobotType.BARRACKS.oreCost) {
                                 built = doBuild(buildDirection, RobotType.BARRACKS);
+                            } else {
+                                shouldWait = true;
                             }
                         } else if (countOf(RobotType.TANK) == 0 || countOfNearbyFriendly(RobotType.TANK, 2 * GameConstants.SUPPLY_TRANSFER_RADIUS_SQUARED) > 0) { // || 2*rc.getLocation().distanceSquaredTo(rc.senseEnemyHQLocation()) > 3*rc.getLocation().distanceSquaredTo(rc.senseHQLocation())) {
+                            shouldWait = !isCongested();
                             if (rc.getTeamOre() >= RobotType.TANKFACTORY.oreCost && rc.hasBuildRequirements(RobotType.TANKFACTORY) &&
                                     (countOf(RobotType.TANKFACTORY) == 0 || rc.getTeamOre() > Math.min(3000, 1500*countOf(RobotType.TANKFACTORY))) &&
                                     (!isCongested() || rc.getTeamOre() > 2000)) {
                                 built = doBuild(buildDirection, RobotType.TANKFACTORY);
-                            } else if (rc.getTeamOre() >= RobotType.TECHNOLOGYINSTITUTE.oreCost && countOfNearbyFriendly(RobotType.TECHNOLOGYINSTITUTE, 10*10) == 0) {
-                                built = doBuild(buildDirection, RobotType.TECHNOLOGYINSTITUTE);
-                            } else if (rc.getTeamOre() >= RobotType.SUPPLYDEPOT.oreCost && countOf(RobotType.TANK) > 0 && 5*countOf(RobotType.SUPPLYDEPOT) < 4*countOf(RobotType.COMPUTER)) {
-                                built = doBuild(buildDirection, RobotType.SUPPLYDEPOT);
+                            } else {
+                                shouldWait = true;
+                                if (rc.getTeamOre() >= RobotType.TECHNOLOGYINSTITUTE.oreCost && countOfNearbyFriendly(RobotType.TECHNOLOGYINSTITUTE, 10*10) == 0) {
+                                    built = doBuild(buildDirection, RobotType.TECHNOLOGYINSTITUTE);
+                                } else if (rc.getTeamOre() >= RobotType.SUPPLYDEPOT.oreCost && countOf(RobotType.TANK) > 0 && 5*countOf(RobotType.SUPPLYDEPOT) < 4*countOf(RobotType.COMPUTER)) {
+                                    built = doBuild(buildDirection, RobotType.SUPPLYDEPOT);
+                                }
                             }
                         }
 
                         if (rc.isCoreReady()) {
-                            mineAndTrack();
+                            if (shouldWait) {
+                                mineAndTrack();
+                            } else {
+                                facing = rc.getLocation().directionTo(rc.senseHQLocation());
+                            }
                         }
 
                         if (built || (rand.nextInt(15) == 0 && rc.getSupplyLevel() < 100)) {
