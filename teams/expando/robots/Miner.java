@@ -39,7 +39,7 @@ public class Miner extends BaseRobot {
         }
     }
 
-    private void planMine() {
+    private void planMine() throws GameActionException {
         planDirection = null;
         MapLocation[] towers = rc.senseEnemyTowerLocations();
         RobotInfo[] enemies = rc.senseNearbyRobots(RobotType.TANK.attackRadiusSquared + 2, enemyTeam);
@@ -48,12 +48,17 @@ public class Miner extends BaseRobot {
         double bestOrePerTurn = mineAmount(rc.getLocation());
 
         for(Direction d : directions) {
-            MapLocation mineLocation = rc.getLocation().add(d);
-            double costToMove = rc.getType().movementDelay;
-            if (d.isDiagonal()) {
-                costToMove *= 1.4;
-            }
-            if (rc.canMove(d)) {
+            MapLocation mineLocation = rc.getLocation();
+
+            double costToMove = rc.getType().movementDelay * (d.isDiagonal() ? 1.4 : 1.0);
+
+            for(int extent = 0; extent<6; extent++) {
+                mineLocation = mineLocation.add(d);
+
+                if (!rc.canSenseLocation(mineLocation) || rc.isLocationOccupied(mineLocation) || rc.senseTerrainTile(mineLocation) != TerrainTile.NORMAL) {
+                    break;
+                }
+
                 boolean attackable = false;
                 for(MapLocation loc : towers) {
                     if (mineLocation.distanceSquaredTo(loc) <= RobotType.TOWER.attackRadiusSquared) {
@@ -71,6 +76,11 @@ public class Miner extends BaseRobot {
                         }
                     }
                 }
+
+                if (attackable && extent > 0) {
+                    break;
+                }
+
                 if (!attackable) {
                     double orePerTurn = mineAmount(mineLocation) / costToMove;
 
