@@ -45,7 +45,17 @@ public class HQ extends BaseRobot {
             for (RobotInfo r : myRobots) {
                 counts[r.type.ordinal()]++;
 
-                if (isBuilding(r.type)) {
+                boolean building = isBuilding(r.type);
+                if (!building) {
+                    if (r.type == RobotType.COMPUTER) {
+                        MapLocation normalized = coordinateSystem.toNormalized(r.location);
+                        if (Boolean.TRUE.equals(buildable[normalized.x][normalized.y])) {
+                            rc.setIndicatorString(0, "Round "+Clock.getRoundNum()+": "+r.location);
+                            building = true;
+                        }
+                    }
+                }
+                if (building) {
                     if (!allBuildings.contains(r.ID)) {
                         buildingsToAdd.add(r.location);
                         allBuildings.add(r.ID);
@@ -62,7 +72,7 @@ public class HQ extends BaseRobot {
             }
         }
 
-        rc.setIndicatorString(0, "A: Same round: "+(Clock.getRoundNum() == startingRound)+ " ("+startingRound+" -> "+Clock.getRoundNum()+" rem "+Clock.getBytecodesLeft());
+//        rc.setIndicatorString(0, "A: Same round: "+(Clock.getRoundNum() == startingRound)+ " ("+startingRound+" -> "+Clock.getRoundNum()+" rem "+Clock.getBytecodesLeft());
 
         if (rc.isCoreReady() &&
                 rc.getTeamOre() >= RobotType.BEAVER.oreCost && countOf(RobotType.BEAVER) < maxBeavers()) {
@@ -129,12 +139,15 @@ public class HQ extends BaseRobot {
         return type == RobotType.MINERFACTORY ||
                 type == RobotType.SUPPLYDEPOT ||
                 type == RobotType.BARRACKS ||
-                type == RobotType.TANKFACTORY;
+                type == RobotType.TANKFACTORY ||
+                type == RobotType.TECHNOLOGYINSTITUTE;
     }
 
     private int maxBeavers() throws GameActionException {
-        return 1 + Math.max(
-                countOf(RobotType.BARRACKS) + countOf(RobotType.TANKFACTORY),
-                countOf(RobotType.TANK)/3);
+        return 1 + Math.min(
+                2,
+                    Math.max(
+                        countOf(RobotType.BARRACKS) + countOf(RobotType.TANKFACTORY),
+                        countOf(RobotType.TANK)/3));
     }
 }

@@ -1,6 +1,7 @@
 package expando.robots;
 
 import battlecode.common.*;
+import expando.CoordinateSystem;
 
 import java.util.Random;
 
@@ -19,6 +20,7 @@ public abstract class BaseRobot {
     private Boolean congested;
     protected Direction planDirection;
     private Double minedBefore;
+    protected final CoordinateSystem coordinateSystem;
 
     protected BaseRobot(RobotController _rc) {
         rc = _rc;
@@ -27,6 +29,7 @@ public abstract class BaseRobot {
         enemyTeam = myTeam.opponent();
         rand = new Random(rc.getID());
         facing = directions[rand.nextInt(8)];
+        coordinateSystem = new CoordinateSystem(rc);
     }
 
     public final void run() {
@@ -484,4 +487,23 @@ public abstract class BaseRobot {
         minedBefore = rc.senseOre(rc.getLocation());
         rc.mine();
     }
+
+    protected boolean supplyBorder(Direction direction) throws GameActionException {
+        MapLocation target = rc.getLocation();
+        boolean desired = false;
+
+        for(int extent = 0; extent<3; extent++) {
+            target = target.add(direction);
+            TerrainTile terrainTile = rc.senseTerrainTile(target);
+            if (terrainTile != TerrainTile.NORMAL) {
+                break;
+            } else if (rc.readBroadcast(200 + coordinateSystem.broadcastOffsetForNormalizated(coordinateSystem.toNormalized(target))) == 1) {
+                desired = true;
+                break;
+            }
+        }
+
+        return desired;
+    }
+
 }
