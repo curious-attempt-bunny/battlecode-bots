@@ -124,7 +124,8 @@ public class HQ extends BaseRobot {
     private void addBuildLocation(int x, int y) throws GameActionException {
         if (buildable[x][y] == null) {
             MapLocation loc = new MapLocation(x, y);
-            if (rc.senseTerrainTile(coordinateSystem.toGame(loc)) == TerrainTile.NORMAL) {
+            if ((x + y) % 2 != 0 && // leave gaps
+                    rc.senseTerrainTile(coordinateSystem.toGame(loc)) == TerrainTile.NORMAL) {
                 buildable[x][y] = true;
                 validBuildLocations.add(loc);
                 rc.broadcast(200 + coordinateSystem.broadcastOffsetForNormalizated(loc), 1);
@@ -147,6 +148,6 @@ public class HQ extends BaseRobot {
         return 1 +
             Math.max(
                     countOf(RobotType.BARRACKS) + countOf(RobotType.TANKFACTORY),
-                    countOf(RobotType.TANK)/3);
+                    countOf(RobotType.TANK) / 3);
 }
 }
