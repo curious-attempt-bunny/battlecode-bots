@@ -143,7 +143,7 @@ public class Beaver extends BaseRobot {
 
         for(Direction d : directions) {
             MapLocation location = normalizedLocation.add(d);
-            if (rc.readBroadcast(200 + coordinateSystem.broadcastOffsetForNormalizated(location)) == 1 && !rc.isLocationOccupied(rc.getLocation().add(d))) {
+            if (rc.readBroadcast(BORDER_MAP + coordinateSystem.broadcastOffsetForNormalizated(location)) == 1 && !rc.isLocationOccupied(rc.getLocation().add(d))) {
                 direction = d;
                 break;
             }

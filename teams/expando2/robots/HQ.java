@@ -14,6 +14,7 @@ public class HQ extends BaseRobot {
 
     private final CoordinateSystem coordinateSystem;
     private final Set<MapLocation> validBuildLocations;
+    private final Set<MapLocation> designatedBuildLocations;
     private final HashSet<Integer> allBuildings;
     private final ArrayList<MapLocation> buildingsToAdd;
     Boolean[][] buildable;
@@ -23,6 +24,7 @@ public class HQ extends BaseRobot {
         super(_rc);
         coordinateSystem = new CoordinateSystem(rc);
         validBuildLocations = new HashSet<MapLocation>();
+        designatedBuildLocations = new HashSet<MapLocation>();
         allBuildings = new HashSet<Integer>(10000);
         buildable = new Boolean[CoordinateSystem.MAP_WIDTH][CoordinateSystem.MAP_HEIGHT];
         buildingsToAdd = new ArrayList<MapLocation>(10000);
@@ -113,7 +115,8 @@ public class HQ extends BaseRobot {
                 if (Boolean.TRUE.equals(buildable[xx][yy])) {
                     MapLocation loc = new MapLocation(xx, yy);
                     validBuildLocations.remove(loc);
-                    rc.broadcast(200+coordinateSystem.broadcastOffsetForNormalizated(loc), 0);
+                    Command.removeFromList(loc);
+                    rc.broadcast(BORDER_MAP+coordinateSystem.broadcastOffsetForNormalizated(loc), 0);
                 }
                 buildable[xx][yy] = false;
             }
@@ -127,7 +130,8 @@ public class HQ extends BaseRobot {
                     rc.senseTerrainTile(coordinateSystem.toGame(loc)) == TerrainTile.NORMAL) {
                 buildable[x][y] = true;
                 validBuildLocations.add(loc);
-                rc.broadcast(200 + coordinateSystem.broadcastOffsetForNormalizated(loc), 1);
+                new Command(rc, loc).addToList();
+                rc.broadcast(BORDER_MAP + coordinateSystem.broadcastOffsetForNormalizated(loc), 1);
             } else {
                 buildable[x][y] = false;
             }

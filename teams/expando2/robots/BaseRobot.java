@@ -3,13 +3,21 @@ package expando2.robots;
 import battlecode.common.*;
 import expando2.CoordinateSystem;
 
+import java.util.List;
 import java.util.Random;
 
 /**
  * Created by home on 1/6/15.
  */
 public abstract class BaseRobot {
-    protected final RobotController rc;
+    public static final int TOTAL_MINED = 100;
+    public static final int TOTAL_KILLS = 101;
+    public static final int BORDER_MAP = 200;
+    public static final int COMMAND_COUNT = 1000 + BORDER_MAP + CoordinateSystem.MAP_WIDTH*CoordinateSystem.MAP_HEIGHT;
+    public static final int COMMAND_LIST = COMMAND_COUNT+1;
+    public static final int COMMAND_WIDTH = 2;
+
+    public RobotController rc;
     protected final int myRange;
     protected final Team myTeam;
     protected final Team enemyTeam;
@@ -38,8 +46,8 @@ public abstract class BaseRobot {
                 if (minedBefore != null) {
                     double minedAfter = rc.senseOre(rc.getLocation());
                     double mined = minedBefore - minedAfter;
-                    int globallyMined = rc.readBroadcast(100) + (int) (mined*1000);
-                    rc.broadcast(100, globallyMined);
+                    int globallyMined = rc.readBroadcast(TOTAL_MINED) + (int) (mined*1000);
+                    rc.broadcast(TOTAL_MINED, globallyMined);
                     rc.setIndicatorString(2, "Globally mined: "+globallyMined);
                     rc.addMatchObservation(this.getClass().getCanonicalName()+": Globally mined: "+globallyMined);
 
@@ -48,6 +56,7 @@ public abstract class BaseRobot {
 
                 nearby = null;
                 congested = null;
+                Command.startOfTurn(rc);
 
                 act();
                 transferSupply();
@@ -98,8 +107,8 @@ public abstract class BaseRobot {
         if (target != null) {
             rc.attackLocation(target.location);
             if (rc.getType().attackPower >= target.health) {
-                int totalKills = rc.readBroadcast(101) + 1;
-                rc.broadcast(101, totalKills);
+                int totalKills = rc.readBroadcast(TOTAL_KILLS) + 1;
+                rc.broadcast(TOTAL_KILLS, totalKills);
                 rc.setIndicatorString(1, "Total kills: " + totalKills);
                 rc.addMatchObservation(this.getClass().getCanonicalName()+": Total kills: "+totalKills);
             }
@@ -497,7 +506,7 @@ public abstract class BaseRobot {
             TerrainTile terrainTile = rc.senseTerrainTile(target);
             if (terrainTile != TerrainTile.NORMAL) {
                 break;
-            } else if (rc.readBroadcast(200 + coordinateSystem.broadcastOffsetForNormalizated(coordinateSystem.toNormalized(target))) == 1) {
+            } else if (rc.readBroadcast(BORDER_MAP + coordinateSystem.broadcastOffsetForNormalizated(coordinateSystem.toNormalized(target))) == 1) {
                 desired = true;
                 break;
             }
@@ -505,5 +514,4 @@ public abstract class BaseRobot {
 
         return desired;
     }
-
 }

@@ -63,7 +63,7 @@ public class Computer extends BaseRobot {
                     MapLocation target = rc.getLocation().add(facing);
                     if (!isAttackableByEnemyTowers(target) && rc.canMove(facing)) {
                         rc.move(facing);
-                        if (rc.readBroadcast(200 + coordinateSystem.broadcastOffsetForNormalizated(coordinateSystem.toNormalized(target))) == 1) {
+                        if (rc.readBroadcast(BORDER_MAP + coordinateSystem.broadcastOffsetForNormalizated(coordinateSystem.toNormalized(target))) == 1) {
                             searchingForStation = false;
                         }
                     }
