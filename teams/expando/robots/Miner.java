@@ -55,6 +55,8 @@ public class Miner extends BaseRobot {
             for(int extent = 0; extent<6; extent++) {
                 mineLocation = mineLocation.add(d);
 
+                if (Clock.getBytecodesLeft() < 150) return;
+
                 if (!rc.canSenseLocation(mineLocation) || rc.isLocationOccupied(mineLocation) || rc.senseTerrainTile(mineLocation) != TerrainTile.NORMAL) {
                     break;
                 }
