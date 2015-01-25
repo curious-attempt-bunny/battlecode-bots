@@ -21,7 +21,9 @@ public class Beaver extends BaseRobot {
 
         if (rc.isCoreReady()) {
             Direction buildDirection = getBuildDirection();
-            if (buildDirection != null) {
+            RobotType buildingToBuild = null;
+            boolean shouldWait = false;
+//            if (buildDirection != null) {
 //                int relayCount = relayCount();
 //                if (relayCount == 1) {
 //                    if (rc.getTeamOre() >= RobotType.TANKFACTORY.oreCost && rc.hasBuildRequirements(RobotType.TANKFACTORY) &&
@@ -33,20 +35,19 @@ public class Beaver extends BaseRobot {
 //                    if (buildDirection != null) {
 
                         boolean built = false;
-                        boolean shouldWait = false;
                         if (countOf(RobotType.MINERFACTORY) == 0) {
                             if (rc.getTeamOre() >= RobotType.MINERFACTORY.oreCost) {
         //                        Direction bestOrdeBuildDirection = bestOreBuildDirection();
         //                        if (bestOrdeBuildDirection != null) {
         //                            buildDirection = bestOrdeBuildDirection;
         //                        }
-                                built = tryBuild(buildDirection, RobotType.MINERFACTORY);
+                                buildingToBuild = RobotType.MINERFACTORY;
                             } else {
                                 shouldWait = true;
                             }
                         } else if (countOf(RobotType.BARRACKS) == 0) {
                             if (rc.getTeamOre() >= RobotType.BARRACKS.oreCost) {
-                                built = doBuild(buildDirection, RobotType.BARRACKS);
+                                buildingToBuild = RobotType.BARRACKS;
                             } else {
                                 shouldWait = true;
                             }
@@ -55,35 +56,42 @@ public class Beaver extends BaseRobot {
                             if (rc.getTeamOre() >= RobotType.TANKFACTORY.oreCost && rc.hasBuildRequirements(RobotType.TANKFACTORY) &&
                                     (countOf(RobotType.TANKFACTORY) == 0 || rc.getTeamOre() > Math.min(3000, 1500*countOf(RobotType.TANKFACTORY))) &&
                                     (!isCongested() || rc.getTeamOre() > 2000)) {
-                                built = doBuild(buildDirection, RobotType.TANKFACTORY);
+                                buildingToBuild = RobotType.TANKFACTORY;
                             } else {
                                 shouldWait = true;
                                 if (rc.getTeamOre() >= RobotType.TECHNOLOGYINSTITUTE.oreCost && countOfNearbyFriendly(RobotType.TECHNOLOGYINSTITUTE, 10*10) == 0) {
-                                    built = doBuild(buildDirection, RobotType.TECHNOLOGYINSTITUTE);
+                                    buildingToBuild = RobotType.TECHNOLOGYINSTITUTE;
                                 } else if (rc.getTeamOre() >= RobotType.SUPPLYDEPOT.oreCost && countOf(RobotType.TANK) > 0 && 5*countOf(RobotType.SUPPLYDEPOT) < 4*countOf(RobotType.COMPUTER)) {
-                                    built = doBuild(buildDirection, RobotType.SUPPLYDEPOT);
+                                    buildingToBuild = RobotType.SUPPLYDEPOT;
                                 }
                             }
                         }
 
-                        if (rc.isCoreReady()) {
-                            if (shouldWait) {
-                                mineAndTrack();
-                            } else {
-                                facing = rc.getLocation().directionTo(rc.senseHQLocation());
-                            }
-                        }
 
-                        if (built || (rand.nextInt(15) == 0 && rc.getSupplyLevel() < 100)) {
-                            facing = rc.getLocation().directionTo(rc.senseHQLocation());
-                        }
 //                        return;
 //                    }
 //                }
+//            }
+            if (buildDirection != null) {
+                if (buildingToBuild != null) {
+                    built = doBuild(buildDirection, buildingToBuild);
+                }
+
+                if (rc.isCoreReady()) {
+                    if (shouldWait) {
+                        mineAndTrack();
+                    } else {
+                        facing = rc.getLocation().directionTo(rc.senseHQLocation());
+                    }
+                }
+
+                if (built || (rand.nextInt(15) == 0 && rc.getSupplyLevel() < 100)) {
+                    facing = rc.getLocation().directionTo(rc.senseHQLocation());
+                }
             }
 
             // ahead is bad for building but left or right is good.
-            if (!supplyBorder(facing)) {
+            if (rc.isCoreReady() && shouldWait && !supplyBorder(facing)) {
                 if (supplyBorder(facing.rotateLeft().rotateLeft())) {
                     facing = facing.rotateLeft().rotateLeft();
                 } else if (supplyBorder(facing.rotateRight().rotateRight())) {
