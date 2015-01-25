@@ -50,9 +50,9 @@ public class Beaver extends BaseRobot {
                                     (countOf(RobotType.TANKFACTORY) == 0 || rc.getTeamOre() > Math.min(3000, 1500*countOf(RobotType.TANKFACTORY))) &&
                                     (!isCongested() || rc.getTeamOre() > 2000)) {
                                 built = doBuild(buildDirection, RobotType.TANKFACTORY);
-                            } else if (rc.getTeamOre() >= RobotType.TECHNOLOGYINSTITUTE.oreCost && (!isCongested() || countOf(RobotType.TANK) > 0) && countOfNearbyFriendly(RobotType.TECHNOLOGYINSTITUTE, 20*20) == 0) {
+                            } else if (rc.getTeamOre() >= RobotType.TECHNOLOGYINSTITUTE.oreCost && countOfNearbyFriendly(RobotType.TECHNOLOGYINSTITUTE, 10*10) == 0) {
                                 built = doBuild(buildDirection, RobotType.TECHNOLOGYINSTITUTE);
-                            } else if (rc.getTeamOre() >= RobotType.SUPPLYDEPOT.oreCost && 5*countOf(RobotType.SUPPLYDEPOT) < 4*countOf(RobotType.COMPUTER)) {
+                            } else if (rc.getTeamOre() >= RobotType.SUPPLYDEPOT.oreCost && countOf(RobotType.TANK) > 0 && 5*countOf(RobotType.SUPPLYDEPOT) < 4*countOf(RobotType.COMPUTER)) {
                                 built = doBuild(buildDirection, RobotType.SUPPLYDEPOT);
                             }
                         }
@@ -64,7 +64,7 @@ public class Beaver extends BaseRobot {
                         if (built || (rand.nextInt(15) == 0 && rc.getSupplyLevel() < 100)) {
                             facing = rc.getLocation().directionTo(rc.senseHQLocation());
                         }
-                        return;
+//                        return;
 //                    }
 //                }
             }
@@ -123,7 +123,7 @@ public class Beaver extends BaseRobot {
 
         for(Direction d : directions) {
             MapLocation location = normalizedLocation.add(d);
-            if (rc.readBroadcast(200 + coordinateSystem.broadcastOffsetForNormalizated(location)) == 1) {
+            if (rc.readBroadcast(200 + coordinateSystem.broadcastOffsetForNormalizated(location)) == 1 && !rc.isLocationOccupied(rc.getLocation().add(d))) {
                 direction = d;
                 break;
             }

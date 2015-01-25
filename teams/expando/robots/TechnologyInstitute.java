@@ -1,9 +1,6 @@
 package expando.robots;
 
-import battlecode.common.Clock;
-import battlecode.common.GameActionException;
-import battlecode.common.RobotController;
-import battlecode.common.RobotType;
+import battlecode.common.*;
 
 /**
  * Created by home on 1/18/15.
@@ -18,16 +15,18 @@ public class TechnologyInstitute extends BaseRobot {
 
     @Override
     protected void act() throws GameActionException {
-        if (rc.isCoreReady() && rc.getTeamOre() >= RobotType.COMPUTER.oreCost && computersBuilt <= 12) {
-            if (!isHeavyTraffic()) {
+        if (rc.isCoreReady() && rc.getTeamOre() >= RobotType.COMPUTER.oreCost) { // && computersBuilt <= 12) {
+            if (countOfNearbyFriendly(RobotType.COMPUTER, GameConstants.SUPPLY_TRANSFER_RADIUS_SQUARED) < 8) {
+//            if (!isHeavyTraffic()) {
                 trySpawn(directions[rand.nextInt(8)], RobotType.COMPUTER);
                 if (!rc.isCoreReady()) {
                     computersBuilt++;
                 }
+//            }
             }
         }
 
-        if (Clock.getRoundNum() % 25 == 0) {
+        if (Clock.getRoundNum() % 5 == 0) {
             computersBuilt--;
         }
     }

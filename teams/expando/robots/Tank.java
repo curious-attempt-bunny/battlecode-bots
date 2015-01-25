@@ -90,8 +90,8 @@ public class Tank extends BaseRobot {
         }
     }
 
-    private int tankPushThreshold() {
-        if (Clock.getRoundNum() > 1900) {
+    private int tankPushThreshold() throws GameActionException {
+        if (Clock.getRoundNum() > 1900 || countOf(RobotType.TANK) > 25) {
             return 1;
         } else if (Clock.getRoundNum() > 1800) {
             return 2;
