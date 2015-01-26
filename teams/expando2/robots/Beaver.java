@@ -138,10 +138,6 @@ public class Beaver extends BaseRobot {
         return true;
     }
 
-//    private Direction getBuildDirection() {
-//        return facing.rotateRight().rotateRight().rotateRight();
-//    }
-
     private Direction getBuildDirection() throws GameActionException {
         MapLocation normalizedLocation = coordinateSystem.toNormalized(rc.getLocation());
         Direction direction = null;

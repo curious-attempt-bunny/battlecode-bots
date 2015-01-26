@@ -43,8 +43,6 @@ public class HQ extends BaseRobot {
         startingRound = Clock.getRoundNum();
         aliveBuildings.clear();
 
-//        Set<Integer> deadBuildings = (Set<Integer>) allBuildings.clone();
-
         rc.setIndicatorString(0, "A: Same round: "+(Clock.getRoundNum() == startingRound)+ " ("+startingRound+" -> "+Clock.getRoundNum()+" rem "+Clock.getBytecodesLeft());
 
         if (rc.isWeaponReady()) {
@@ -62,7 +60,6 @@ public class HQ extends BaseRobot {
                     if (r.type == RobotType.COMPUTER) {
                         MapLocation normalized = coordinateSystem.toNormalized(r.location);
                         if (Boolean.TRUE.equals(buildable[normalized.x][normalized.y])) {
-//                            rc.setIndicatorString(0, "Round "+Clock.getRoundNum()+": "+r.location);
                             building = true;
                         } else if (allBuildings.contains(r.ID)) {
                             aliveBuildings.add(r.ID);
@@ -78,10 +75,6 @@ public class HQ extends BaseRobot {
                     }
                 }
             }
-
-    //        for(MapLocation loc : validBuildLocations) {
-    //            rc.setIndicatorDot(coordinateSystem.toGame(loc), 0, 255, 0);
-    //        }
 
             for(RobotType type : RobotType.values()) {
                 rc.broadcast(type.ordinal(), counts[type.ordinal()]);

@@ -50,7 +50,6 @@ public abstract class BaseRobot {
                     double mined = minedBefore - minedAfter;
                     int globallyMined = rc.readBroadcast(TOTAL_MINED) + (int) (mined*1000);
                     rc.broadcast(TOTAL_MINED, globallyMined);
-//                    rc.setIndicatorString(2, "Globally mined: "+globallyMined);
                     rc.addMatchObservation(this.getClass().getCanonicalName()+": Globally mined: "+globallyMined);
 
                     minedBefore = null;
@@ -58,7 +57,6 @@ public abstract class BaseRobot {
 
                 nearby = null;
                 congested = null;
-//                Command.startOfTurn(rc);
 
                 act();
                 transferSupply();
@@ -76,7 +74,6 @@ public abstract class BaseRobot {
 
     protected abstract void act() throws GameActionException;
 
-    // This method will attack an enemy in sight, if there is one
     protected boolean attackSomething() throws GameActionException {
         RobotInfo target = null;
         double attackRatio = Double.MIN_VALUE;
@@ -91,15 +88,7 @@ public abstract class BaseRobot {
                 target = info;
                 break;
             }
-//            double ratio = info.type.oreCost * Math.ceil(info.health / rc.getType().attackPower); // 117 kills
-//            double ratio = Math.random(); // 126 kills
-//            double ratio = info.health; // 129 kills
-//            double ratio = -info.type.oreCost * Math.ceil(info.health / rc.getType().attackPower); // 147 kills
-//            double ratio = -Math.ceil(info.health / rc.getType().attackPower) + (info.type.oreCost/1000.0); // 147 kills
-//            double ratio = -Math.ceil(info.health / rc.getType().attackPower) - (info.health/100.0) + (info.type.oreCost/1000.0); // 150 kills
-//            double ratio = -Math.ceil(info.health / rc.getType().attackPower) + (info.type.attackPower/10.0) - (info.health/100.0) + (info.type.oreCost/1000.0); // 151 kills
-//            double ratio = -Math.ceil(info.health / rc.getType().attackPower); // 156 kills
-            double ratio = -info.health; // 157 kills
+            double ratio = -info.health;
             if (ratio > attackRatio || (ratio == attackRatio && rand.nextBoolean())) {
                 target = info;
                 attackRatio = ratio;
@@ -111,7 +100,6 @@ public abstract class BaseRobot {
             if (rc.getType().attackPower >= target.health) {
                 int totalKills = rc.readBroadcast(TOTAL_KILLS) + 1;
                 rc.broadcast(TOTAL_KILLS, totalKills);
-//                rc.setIndicatorString(1, "Total kills: " + totalKills);
                 rc.addMatchObservation(this.getClass().getCanonicalName()+": Total kills: "+totalKills);
             }
             return true;
@@ -120,7 +108,6 @@ public abstract class BaseRobot {
         }
     }
 
-    // This method will attempt to move in Direction d (or as close to it as possible)
     protected void tryMove(Direction d) throws GameActionException {
         int offsetIndex = 0;
         int[] offsets = {0,1,-1,2,-2};
@@ -135,7 +122,6 @@ public abstract class BaseRobot {
         }
     }
 
-    // This method will attempt to spawn in the given direction (or as close to it as possible)
     protected void trySpawn(Direction d, RobotType type) throws GameActionException {
         int offsetIndex = 0;
         int[] offsets = {0,1,-1,2,-2,3,-3,4};
@@ -149,7 +135,6 @@ public abstract class BaseRobot {
         }
     }
 
-    // This method will attempt to build in the given direction (or as close to it as possible)
     protected boolean tryBuild(Direction d, RobotType type) throws GameActionException {
         int offsetIndex = 0;
         int[] offsets = {0,1,-1,2,-2,3,-3,4};
@@ -282,25 +267,6 @@ public abstract class BaseRobot {
 
     protected boolean isCongested() {
         if (congested != null) return congested;
-//        int xMin = rc.getLocation().x - 4;
-//        int xMax = rc.getLocation().x + 4;
-//        int yMin = rc.getLocation().y - 4;
-//        int yMax = rc.getLocation().y + 4;
-//        int obstructed = 0;
-//
-//        for(int x=xMin; x<=xMax; x++) {
-//            for(int y=yMin; y<=yMax; y++) {
-//                TerrainTile terrainTile = rc.senseTerrainTile(new MapLocation(x, y));
-//                if (!terrainTile.isTraversable()) {
-//                    obstructed++;
-//                }
-//            }
-//        }
-//
-//        double ratio = obstructed / (9.0*9.0);
-//        rc.setIndicatorString(1, "Obstruction ratio is "+ratio);
-//
-//        return ratio > 0.25;
 
         int clearCount = 0;
         for(Direction d : directions) {
@@ -318,8 +284,6 @@ public abstract class BaseRobot {
                 clearCount++;
             }
         }
-
-//        rc.setIndicatorString(1, "Obstruction: clear count = "+clearCount+". Congested? = "+(clearCount <= 3));
 
         congested = clearCount < 6;
         return congested;
@@ -342,11 +306,7 @@ public abstract class BaseRobot {
 
         if (count > 0) {
             planDirection = vectorToDirection(x,y);
-        } else {
-//            planDirection = null;
         }
-
-//        rc.setIndicatorString(0, planDirection + " from vector " + x + "," + y);
     }
 
     private Direction vectorToDirection(double x, double y) {
@@ -457,7 +417,6 @@ public abstract class BaseRobot {
 
     protected boolean isHeavyTraffic() {
         RobotInfo[] robotInfos = rc.senseNearbyRobots(10, myTeam);
-//        rc.setIndicatorString(0, "Heavy traffic? "+robotInfos.length+" nearby friends");
 
         return robotInfos.length >= 5;
     }
@@ -518,13 +477,7 @@ public abstract class BaseRobot {
     }
 
     protected void updateCommandTarget() throws GameActionException {
-        // ahead is bad for building but left or right is good.
-        if (rc.isCoreReady() /*&& shouldWait*/ /*&& !supplyBorder(facing)*/) {
-//                if (supplyBorder(facing.rotateLeft().rotateLeft())) {
-//                    facing = facing.rotateLeft().rotateLeft();
-//                } else if (supplyBorder(facing.rotateRight().rotateRight())) {
-//                    facing = facing.rotateRight().rotateRight();
-//                } else {
+        if (rc.isCoreReady()) {
             if (commandTarget != null) {
                 if (rc.canSenseLocation(commandTarget) && rc.isLocationOccupied(commandTarget)) {
                     System.out.println("Command target is occupied. Done: "+commandTarget);
@@ -539,8 +492,6 @@ public abstract class BaseRobot {
                 rc.setIndicatorString(1, "Command target: "+commandTarget);
                 facing = rc.getLocation().directionTo(commandTarget);
             }
-//                }
-
         }
     }
 }
