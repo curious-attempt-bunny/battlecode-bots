@@ -13,8 +13,8 @@ public class Tank extends BaseRobot {
     public Tank(RobotController _rc) throws GameActionException {
         super(_rc);
         facing = rc.getLocation().directionTo(rc.senseHQLocation()).opposite();
-        int towers = rc.senseEnemyTowerLocations().length;
-        rallyIndex = towers == 0 ? 0 : rand.nextInt(towers);
+        int towers = rc.senseEnemyTowerLocations().length+2;
+        rallyIndex = rand.nextInt(towers);
         rightRotation = rand.nextBoolean();
     }
 

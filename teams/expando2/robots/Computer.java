@@ -26,15 +26,17 @@ public class Computer extends BaseRobot {
     protected void act() throws GameActionException {
         if (rc.isCoreReady()) {
 
-            if (rallyIndex != null && rand.nextInt(10) == 0) {
-                facing = rc.getLocation().directionTo(getRallyPoint());
-            }
+            if (rallyIndex != null) {
+                if (rand.nextInt(10) == 0) {
+                    facing = rc.getLocation().directionTo(getRallyPoint());
+                }
+            } else {
+                updateCommandTarget();
 
-            updateCommandTarget();
-
-            if (commandTarget != null && rand.nextInt(2) == 0) {
-                facing = rc.getLocation().directionTo(commandTarget);
-                rc.setIndicatorString(1, "Command target: "+(commandTarget.x-rc.getLocation().x)+","+(commandTarget.y-rc.getLocation().y)+" facing "+facing.name()+" to get there.");
+                if (commandTarget != null && rand.nextInt(2) == 0) {
+                    facing = rc.getLocation().directionTo(commandTarget);
+                    rc.setIndicatorString(1, "Command target: "+(commandTarget.x-rc.getLocation().x)+","+(commandTarget.y-rc.getLocation().y)+" facing "+facing.name()+" to get there.");
+                }
             }
 
             // ahead is bad for building but left or right is good.

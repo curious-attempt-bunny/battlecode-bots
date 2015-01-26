@@ -41,7 +41,6 @@ public class HQ extends BaseRobot {
     @Override
     protected void act() throws GameActionException {
         startingRound = Clock.getRoundNum();
-        aliveBuildings.clear();
 
         rc.setIndicatorString(0, "A: Same round: "+(Clock.getRoundNum() == startingRound)+ " ("+startingRound+" -> "+Clock.getRoundNum()+" rem "+Clock.getBytecodesLeft());
 
@@ -49,7 +48,9 @@ public class HQ extends BaseRobot {
             attackSomething();
         }
 
-        if (Clock.getRoundNum() % 2 == 0) {
+        if (Clock.getRoundNum() % 3 == 0) {
+            aliveBuildings.clear();
+
             RobotInfo[] myRobots = rc.senseNearbyRobots(999999, myTeam);
             int[] counts = new int[RobotType.MISSILE.ordinal()+1];
             for (RobotInfo r : myRobots) {
@@ -79,7 +80,7 @@ public class HQ extends BaseRobot {
             for(RobotType type : RobotType.values()) {
                 rc.broadcast(type.ordinal(), counts[type.ordinal()]);
             }
-
+        } else if (Clock.getRoundNum() % 3 == 2) {
             if (aliveBuildings.size() != allBuildings.size()) {
                 confirmedDead.clear();
                 for(Integer id : allBuildings) {
@@ -113,7 +114,7 @@ public class HQ extends BaseRobot {
     protected void compute() throws GameActionException {
         super.compute();
 
-        while (Clock.getBytecodesLeft() > 550 && !buildingsToAdd.isEmpty()) {
+        while (Clock.getBytecodesLeft() > 650 && !buildingsToAdd.isEmpty()) {
             addBuildLocations(buildingsToAdd.remove(buildingsToAdd.size()-1));
         }
 
@@ -151,12 +152,15 @@ public class HQ extends BaseRobot {
     private void addBuildLocation(int x, int y) throws GameActionException {
         if (buildable[x][y] == null) {
             MapLocation loc = new MapLocation(x, y);
+            MapLocation game = coordinateSystem.toGame(loc);
             if ((x + y) % 2 != 0 && // leave gaps
-                    rc.senseTerrainTile(coordinateSystem.toGame(loc)) == TerrainTile.NORMAL) {
-                buildable[x][y] = true;
-                validBuildLocations.add(loc);
-                new Command(rc, loc).addToList(rc);
-                rc.broadcast(BORDER_MAP + coordinateSystem.broadcastOffsetForNormalizated(loc), 1);
+                    rc.senseTerrainTile(game) == TerrainTile.NORMAL) {
+                if (game.distanceSquaredTo(rc.senseHQLocation()) < game.distanceSquaredTo(rc.senseEnemyHQLocation())*0.6) {
+                    buildable[x][y] = true;
+                    validBuildLocations.add(loc);
+                    new Command(rc, loc).addToList(rc);
+                    rc.broadcast(BORDER_MAP + coordinateSystem.broadcastOffsetForNormalizated(loc), 1);
+                }
             } else {
                 buildable[x][y] = false;
             }
