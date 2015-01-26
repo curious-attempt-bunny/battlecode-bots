@@ -31,7 +31,7 @@ public class Tank extends BaseRobot {
             return;
         }
 
-        if (rand.nextInt(10) == 0) {
+        if (rand.nextInt(5) == 0) {
             facing = rc.getLocation().directionTo(rallyPoint);
         }
 

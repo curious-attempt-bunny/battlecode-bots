@@ -42,12 +42,14 @@ public class Beaver extends BaseRobot {
         //                        }
                                 buildingToBuild = RobotType.MINERFACTORY;
                             } else {
+                                rc.setIndicatorString(2, "Want to build: minerfactory");
                                 shouldWait = true;
                             }
                         } else if (countOf(RobotType.BARRACKS) == 0) {
                             if (rc.getTeamOre() >= RobotType.BARRACKS.oreCost) {
                                 buildingToBuild = RobotType.BARRACKS;
                             } else {
+                                rc.setIndicatorString(2, "Want to build: barracks");
                                 shouldWait = true;
                             }
                         } else if (countOf(RobotType.TANK) == 0 || countOfNearbyFriendly(RobotType.TANK, 2 * GameConstants.SUPPLY_TRANSFER_RADIUS_SQUARED) > 0) { // || 2*rc.getLocation().distanceSquaredTo(rc.senseEnemyHQLocation()) > 3*rc.getLocation().distanceSquaredTo(rc.senseHQLocation())) {
@@ -60,10 +62,15 @@ public class Beaver extends BaseRobot {
                                 shouldWait = true;
                                 if (rc.getTeamOre() >= RobotType.TECHNOLOGYINSTITUTE.oreCost && countOfNearbyFriendly(RobotType.TECHNOLOGYINSTITUTE, 10*10) == 0) {
                                     buildingToBuild = RobotType.TECHNOLOGYINSTITUTE;
-                                } else if (rc.getTeamOre() >= RobotType.SUPPLYDEPOT.oreCost && countOf(RobotType.TANK) > 0 && 5*countOf(RobotType.SUPPLYDEPOT) < 4*countOf(RobotType.COMPUTER)) {
+                                } else if (rc.getTeamOre() >= RobotType.SUPPLYDEPOT.oreCost && Math.ceil(countOf(RobotType.TANK)/3.0 + countOf(RobotType.COMPUTER)/8.0) > countOf(RobotType.SUPPLYDEPOT)) {
                                     buildingToBuild = RobotType.SUPPLYDEPOT;
+                                } else {
+                                    rc.setIndicatorString(2, "Round: "+Clock.getRoundNum()+". Want to build: nothing! (countOf(RobotType.TANK) = "+countOf(RobotType.TANK)+", countOf(RobotType.SUPPLYDEPOT) = "+countOf(RobotType.SUPPLYDEPOT)+", countOf(RobotType.COMPUTER) = "+countOf(RobotType.COMPUTER));
                                 }
                             }
+                        }
+                        if (buildingToBuild != null) {
+                            rc.setIndicatorString(2, "Round: "+Clock.getRoundNum()+". Find location to build: "+buildingToBuild.name());
                         }
 
 
@@ -84,18 +91,16 @@ public class Beaver extends BaseRobot {
                     }
                 }
 
-                if (built || (rand.nextInt(15) == 0 && rc.getSupplyLevel() < 100)) {
-                    facing = rc.getLocation().directionTo(rc.senseHQLocation());
-                }
+//                if (built || (rand.nextInt(15) == 0 && rc.getSupplyLevel() < 100)) {
+//                    facing = rc.getLocation().directionTo(rc.senseHQLocation());
+//                }
             }
 
-            // ahead is bad for building but left or right is good.
-            if (rc.isCoreReady() && shouldWait && !supplyBorder(facing)) {
-                if (supplyBorder(facing.rotateLeft().rotateLeft())) {
-                    facing = facing.rotateLeft().rotateLeft();
-                } else if (supplyBorder(facing.rotateRight().rotateRight())) {
-                    facing = facing.rotateRight().rotateRight();
-                }
+            updateCommandTarget();
+
+            if (commandTarget != null && (built || rand.nextInt(2) == 0)) {
+                facing = rc.getLocation().directionTo(commandTarget);
+                rc.setIndicatorString(1, "Command target: "+(commandTarget.x-rc.getLocation().x)+","+(commandTarget.y-rc.getLocation().y)+" facing "+facing.name()+" to get there.");
             }
 
             RobotInfo[] enemies = rc.senseNearbyRobots(RobotType.TANK.attackRadiusSquared + 2, enemyTeam);

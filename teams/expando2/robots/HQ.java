@@ -4,6 +4,7 @@ import battlecode.common.*;
 import expando2.CoordinateSystem;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -17,24 +18,34 @@ public class HQ extends BaseRobot {
     private final Set<MapLocation> designatedBuildLocations;
     private final HashSet<Integer> allBuildings;
     private final ArrayList<MapLocation> buildingsToAdd;
+    private final ArrayList<Integer> confirmedDead;
     Boolean[][] buildable;
     private int startingRound;
+    private final HashSet<Integer> aliveBuildings;
+    private final HashMap<Integer, MapLocation> buildingLocations;
 
     public HQ(RobotController _rc) {
         super(_rc);
         coordinateSystem = new CoordinateSystem(rc);
         validBuildLocations = new HashSet<MapLocation>();
         designatedBuildLocations = new HashSet<MapLocation>();
-        allBuildings = new HashSet<Integer>(10000);
+        allBuildings = new HashSet<Integer>();
         buildable = new Boolean[CoordinateSystem.MAP_WIDTH][CoordinateSystem.MAP_HEIGHT];
         buildingsToAdd = new ArrayList<MapLocation>(10000);
         buildingsToAdd.add(rc.getLocation());
+        aliveBuildings = new HashSet<Integer>();
+        buildingLocations = new HashMap<Integer, MapLocation>(10000);
+        confirmedDead = new ArrayList<Integer>();
     }
 
     @Override
     protected void act() throws GameActionException {
         startingRound = Clock.getRoundNum();
+        aliveBuildings.clear();
+
 //        Set<Integer> deadBuildings = (Set<Integer>) allBuildings.clone();
+
+        rc.setIndicatorString(0, "A: Same round: "+(Clock.getRoundNum() == startingRound)+ " ("+startingRound+" -> "+Clock.getRoundNum()+" rem "+Clock.getBytecodesLeft());
 
         if (rc.isWeaponReady()) {
             attackSomething();
@@ -51,15 +62,19 @@ public class HQ extends BaseRobot {
                     if (r.type == RobotType.COMPUTER) {
                         MapLocation normalized = coordinateSystem.toNormalized(r.location);
                         if (Boolean.TRUE.equals(buildable[normalized.x][normalized.y])) {
-                            rc.setIndicatorString(0, "Round "+Clock.getRoundNum()+": "+r.location);
+//                            rc.setIndicatorString(0, "Round "+Clock.getRoundNum()+": "+r.location);
                             building = true;
+                        } else if (allBuildings.contains(r.ID)) {
+                            aliveBuildings.add(r.ID);
                         }
                     }
                 }
                 if (building) {
+                    aliveBuildings.add(r.ID);
                     if (!allBuildings.contains(r.ID)) {
                         buildingsToAdd.add(r.location);
                         allBuildings.add(r.ID);
+                        buildingLocations.put(r.ID, r.location);
                     }
                 }
             }
@@ -70,6 +85,23 @@ public class HQ extends BaseRobot {
 
             for(RobotType type : RobotType.values()) {
                 rc.broadcast(type.ordinal(), counts[type.ordinal()]);
+            }
+
+            if (aliveBuildings.size() != allBuildings.size()) {
+                confirmedDead.clear();
+                for(Integer id : allBuildings) {
+                    if (!aliveBuildings.contains(id)) {
+                        MapLocation loc = coordinateSystem.toNormalized(buildingLocations.get(id));
+                        buildable[loc.x][loc.y] = true;
+                        validBuildLocations.add(loc);
+                        new Command(rc, loc).addToList(rc);
+                        rc.broadcast(BORDER_MAP + coordinateSystem.broadcastOffsetForNormalizated(loc), 1);
+                        confirmedDead.add(id);
+                    }
+                }
+                for(Integer id : confirmedDead) {
+                    allBuildings.remove(id);
+                }
             }
         }
 
@@ -115,8 +147,8 @@ public class HQ extends BaseRobot {
                 if (Boolean.TRUE.equals(buildable[xx][yy])) {
                     MapLocation loc = new MapLocation(xx, yy);
                     validBuildLocations.remove(loc);
-                    Command.removeFromList(loc);
-                    rc.broadcast(BORDER_MAP+coordinateSystem.broadcastOffsetForNormalizated(loc), 0);
+                    Command.removeFromList(rc, loc);
+                    rc.broadcast(BORDER_MAP + coordinateSystem.broadcastOffsetForNormalizated(loc), 0);
                 }
                 buildable[xx][yy] = false;
             }
@@ -130,7 +162,7 @@ public class HQ extends BaseRobot {
                     rc.senseTerrainTile(coordinateSystem.toGame(loc)) == TerrainTile.NORMAL) {
                 buildable[x][y] = true;
                 validBuildLocations.add(loc);
-                new Command(rc, loc).addToList();
+                new Command(rc, loc).addToList(rc);
                 rc.broadcast(BORDER_MAP + coordinateSystem.broadcastOffsetForNormalizated(loc), 1);
             } else {
                 buildable[x][y] = false;

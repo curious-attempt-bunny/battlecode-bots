@@ -29,6 +29,7 @@ public abstract class BaseRobot {
     protected Direction planDirection;
     private Double minedBefore;
     protected final CoordinateSystem coordinateSystem;
+    protected MapLocation commandTarget;
 
     protected BaseRobot(RobotController _rc) {
         rc = _rc;
@@ -38,6 +39,7 @@ public abstract class BaseRobot {
         rand = new Random(rc.getID());
         facing = directions[rand.nextInt(8)];
         coordinateSystem = new CoordinateSystem(rc);
+        commandTarget = null;
     }
 
     public final void run() {
@@ -48,7 +50,7 @@ public abstract class BaseRobot {
                     double mined = minedBefore - minedAfter;
                     int globallyMined = rc.readBroadcast(TOTAL_MINED) + (int) (mined*1000);
                     rc.broadcast(TOTAL_MINED, globallyMined);
-                    rc.setIndicatorString(2, "Globally mined: "+globallyMined);
+//                    rc.setIndicatorString(2, "Globally mined: "+globallyMined);
                     rc.addMatchObservation(this.getClass().getCanonicalName()+": Globally mined: "+globallyMined);
 
                     minedBefore = null;
@@ -56,7 +58,7 @@ public abstract class BaseRobot {
 
                 nearby = null;
                 congested = null;
-                Command.startOfTurn(rc);
+//                Command.startOfTurn(rc);
 
                 act();
                 transferSupply();
@@ -109,7 +111,7 @@ public abstract class BaseRobot {
             if (rc.getType().attackPower >= target.health) {
                 int totalKills = rc.readBroadcast(TOTAL_KILLS) + 1;
                 rc.broadcast(TOTAL_KILLS, totalKills);
-                rc.setIndicatorString(1, "Total kills: " + totalKills);
+//                rc.setIndicatorString(1, "Total kills: " + totalKills);
                 rc.addMatchObservation(this.getClass().getCanonicalName()+": Total kills: "+totalKills);
             }
             return true;
@@ -513,5 +515,32 @@ public abstract class BaseRobot {
         }
 
         return desired;
+    }
+
+    protected void updateCommandTarget() throws GameActionException {
+        // ahead is bad for building but left or right is good.
+        if (rc.isCoreReady() /*&& shouldWait*/ /*&& !supplyBorder(facing)*/) {
+//                if (supplyBorder(facing.rotateLeft().rotateLeft())) {
+//                    facing = facing.rotateLeft().rotateLeft();
+//                } else if (supplyBorder(facing.rotateRight().rotateRight())) {
+//                    facing = facing.rotateRight().rotateRight();
+//                } else {
+            if (commandTarget != null) {
+                if (rc.canSenseLocation(commandTarget) && rc.isLocationOccupied(commandTarget)) {
+                    System.out.println("Command target is occupied. Done: "+commandTarget);
+                    commandTarget = null;
+                }
+            }
+
+            if (commandTarget == null && Command.commandCount(rc) > 0) {
+                Command command = Command.getRandomCommand(rc);
+                commandTarget = coordinateSystem.toGame(command.target);
+                System.out.println("New command target: "+commandTarget);
+                rc.setIndicatorString(1, "Command target: "+commandTarget);
+                facing = rc.getLocation().directionTo(commandTarget);
+            }
+//                }
+
+        }
     }
 }

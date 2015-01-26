@@ -47,6 +47,13 @@ public class Computer extends BaseRobot {
                 facing = rc.getLocation().directionTo(getRallyPoint());
             }
 
+            updateCommandTarget();
+
+            if (commandTarget != null && rand.nextInt(2) == 0) {
+                facing = rc.getLocation().directionTo(commandTarget);
+                rc.setIndicatorString(1, "Command target: "+(commandTarget.x-rc.getLocation().x)+","+(commandTarget.y-rc.getLocation().y)+" facing "+facing.name()+" to get there.");
+            }
+
             // ahead is bad for building but left or right is good.
             if (!supplyBorder(facing)) {
                 if (supplyBorder(facing.rotateLeft().rotateLeft())) {
