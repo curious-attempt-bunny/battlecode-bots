@@ -480,7 +480,7 @@ public abstract class BaseRobot {
         if (rc.isCoreReady()) {
             if (commandTarget != null) {
                 if (rc.canSenseLocation(commandTarget) && rc.isLocationOccupied(commandTarget)) {
-                    System.out.println("Command target is occupied. Done: "+commandTarget);
+//                    System.out.println("Command target is occupied. Done: "+commandTarget);
                     commandTarget = null;
                 }
             }
@@ -488,7 +488,7 @@ public abstract class BaseRobot {
             if (commandTarget == null && Command.commandCount(rc) > 0) {
                 Command command = Command.getRandomCommand(rc);
                 commandTarget = coordinateSystem.toGame(command.target);
-                System.out.println("New command target: "+commandTarget);
+//                System.out.println("New command target: "+commandTarget);
                 rc.setIndicatorString(1, "Command target: "+commandTarget);
                 facing = rc.getLocation().directionTo(commandTarget);
             }
