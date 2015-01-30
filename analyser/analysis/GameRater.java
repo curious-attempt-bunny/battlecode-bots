@@ -268,11 +268,11 @@ public class GameRater {
 
         System.out.println("Waste ----------------------------");
         System.out.println("Units lost                 : "+unitsLost+bonus(-unitsLost));
-        System.out.println("Unit turns without supply  : "+unitsUnsuppliedCount);
+        System.out.println("Unit turns without supply  : "+unitsUnsuppliedCount+bonus(-unitsUnsuppliedCount/50));
         System.out.println("Infrastructure spending    : "+infrastructureSpending+bonus(-infrastructureSpending/500));
         System.out.println("Average unspent            : "+(int)(unspent/2000)+bonus((int) (-(unspent/2000)/25)));
         System.out.println("Non-military units produced: "+(unitsProduced-tanksProduced));
-        System.out.println("Tank factory idle turns    : "+factoryIdleTurns+bonus(-factoryIdleTurns/10));
+        System.out.println("Tank factory idle turns    : "+factoryIdleTurns+bonus(-factoryIdleTurns/100));
         System.out.println("Unit supply average        : "+(int)(totalSupply/supplyCounts));
         System.out.println();
 
