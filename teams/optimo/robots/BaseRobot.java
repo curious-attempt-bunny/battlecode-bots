@@ -218,6 +218,11 @@ public abstract class BaseRobot {
     }
 
     protected void transferSupply() throws GameActionException {
+        transferSupplyAwayFromBase();
+        //transferSupplyEvenly();
+    }
+
+    protected void transferSupplyEvenly() throws GameActionException {
         if (Clock.getBytecodesLeft() < 1000) return;
         double mySupply = rc.getSupplyLevel();
         if (mySupply > 250) {
@@ -229,6 +234,41 @@ public abstract class BaseRobot {
                 if (info.supplyLevel < mySupply/2) {
                     target = info.location;
                     break;
+                }
+            }
+
+            if (target != null && Clock.getBytecodesLeft() > 600) {
+                rc.transferSupplies((int)(mySupply/2), target);
+            }
+        }
+    }
+
+    protected void transferSupplyAwayFromBase() throws GameActionException {
+        if (Clock.getBytecodesLeft() < 1000) return;
+        double mySupply = rc.getSupplyLevel();
+        boolean amImportant = rc.getType() == RobotType.MINER || rc.getType() == RobotType.TANK;
+        if (mySupply > 250) {
+            RobotInfo[] myRobots = rc.senseNearbyRobots(GameConstants.SUPPLY_TRANSFER_RADIUS_SQUARED, myTeam);
+            MapLocation target = null;
+            double bestDistance = 0;
+
+            for(RobotInfo info : myRobots) {
+                if (Clock.getBytecodesLeft() <= 600) return;
+
+                if (mySupply > info.supplyLevel) {
+                    boolean theyImportant = info.type == RobotType.MINER || info.type == RobotType.TANK;
+
+                    if (amImportant && !theyImportant) {
+                        continue;
+                    }
+
+                    double distance = info.location.distanceSquaredTo(rc.senseHQLocation());
+                    if (rand.nextDouble()*(mySupply+info.supplyLevel) > info.supplyLevel) {
+                        if (target == null || (rand.nextDouble()*(distance+bestDistance) >= bestDistance) || (!amImportant && theyImportant)) {
+                            target = info.location;
+                            bestDistance = distance;
+                        }
+                    }
                 }
             }
 

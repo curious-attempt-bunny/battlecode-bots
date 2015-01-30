@@ -43,9 +43,9 @@ public class Beaver extends BaseRobot {
                                 buildingToBuild = RobotType.TANKFACTORY;
                             } else {
 //                                shouldWait = true;
-//                                if (rc.getTeamOre() >= RobotType.TECHNOLOGYINSTITUTE.oreCost && countOfNearbyFriendly(RobotType.TECHNOLOGYINSTITUTE, 10*10) == 0) {
-//                                    buildingToBuild = RobotType.TECHNOLOGYINSTITUTE;
-//                                } else
+                                if (rc.getTeamOre() >= RobotType.TECHNOLOGYINSTITUTE.oreCost && countOf(RobotType.SUPPLYDEPOT) > 2 && countOfNearbyFriendly(RobotType.TECHNOLOGYINSTITUTE, 10*10) == 0) {
+                                    buildingToBuild = RobotType.TECHNOLOGYINSTITUTE;
+                                } else
                                 if (rc.getTeamOre() >= RobotType.SUPPLYDEPOT.oreCost && Math.floor(countOf(RobotType.TANK)/3.0) > countOf(RobotType.SUPPLYDEPOT)) {
                                     buildingToBuild = RobotType.SUPPLYDEPOT;
                                 }
